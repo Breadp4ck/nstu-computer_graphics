@@ -139,10 +139,16 @@ class App
                                 _mode = AppMode.WORKSPACE_MODE;
                                 break;
 
+                            case Key.S:
+                                layers[layerID].Transform.Scale = 0.2f;
+                                break;
+
                             case Key.E:
-                                Console.WriteLine($"Kek: {layerID}");
                                 layers[layerID].DrawLast = false;
+                                layers[layerID].ApplyLayerTransform = false;
+
                                 _mode = AppMode.DRAW_LAYER_MODE;
+
                                 layers[layerID].AddVertex(
                                     new Vertex(
                                         -_camera.CameraPosition.X + 2.0f * _mouse.Position.X / _window.Size.X - 1.0f,
@@ -157,8 +163,11 @@ class App
                         switch (key)
                         {
                             case Key.Escape:
+                                layers[layerID].ApplyLayerTransform = true;
                                 layers[layerID].DrawLast = true;
+
                                 _mode = AppMode.EDIT_LAYER_MODE;
+
                                 layers[layerID].RemoveLastVertex();
                                 break;
                         }
@@ -205,8 +214,8 @@ class App
                             case MouseButton.Left:
                                 layers[layerID].AddVertex(
                                     new Vertex(
-                                        -_camera.CameraPosition.X + 2.0f * _mouse.Position.X / _window.Size.X - 1.0f,
-                                        -_camera.CameraPosition.Y - (2.0f * _mouse.Position.Y / _window.Size.Y - 1.0f)
+                                        (-_camera.CameraPosition.X + (2.0f * (_mouse.Position.X) / _window.Size.X - 1.0f)) / (_camera.Transform.Scale),
+                                        (-_camera.CameraPosition.Y - (2.0f * (_mouse.Position.Y) / _window.Size.Y - 1.0f)) / (_camera.Transform.Scale)
                                     )
                                 );
                                 break;
@@ -245,8 +254,8 @@ class App
                 {
                     layers[layerID].ChangeLastVertex(
                         new Vertex(
-                            -_camera.CameraPosition.X + 2.0f * (position.X) / _window.Size.X - 1.0f,
-                            -_camera.CameraPosition.Y - (2.0f * (position.Y) / _window.Size.Y - 1.0f)
+                            (-_camera.CameraPosition.X + (2.0f * (position.X) / _window.Size.X - 1.0f)) / (_camera.Transform.Scale),
+                            (-_camera.CameraPosition.Y - (2.0f * (position.Y) / _window.Size.Y - 1.0f)) / (_camera.Transform.Scale)
                         )
                     );
                 }
@@ -254,10 +263,19 @@ class App
 
             _mouse.Scroll += (IMouse _mouse, ScrollWheel scroll) =>
             {
-                Console.WriteLine($"{layerID} {layers[layerID].Hue}");
                 // TODO: It's cringe
                 layers[layerID].Hue = (layers[layerID].Hue + 0.02f) % 1.0f;
                 layers[layerID].Color = Color.FromHSV(layers[layerID].Hue, 0.77f, 0.95f);
+
+                _camera.Transform.Scale += scroll.Y * 0.1f;
+                _camera.Transform.Scale = _camera.Transform.Scale >= 0.5f ? _camera.Transform.Scale : 0.5f;
+
+                layers[layerID].ChangeLastVertex(
+                    new Vertex(
+                        (-_camera.CameraPosition.X + (2.0f * (_mouse.Position.X) / _window.Size.X - 1.0f)) / (_camera.Transform.Scale),
+                        (-_camera.CameraPosition.Y - (2.0f * (_mouse.Position.Y) / _window.Size.Y - 1.0f)) / (_camera.Transform.Scale)
+                    )
+                );
             };
         }
 

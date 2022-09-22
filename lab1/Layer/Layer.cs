@@ -2,7 +2,7 @@ using Silk.NET.OpenGL;
 
 class Layer
 {
-    Transform transform;
+    public Transform Transform;
     List<Vertex> _vertices;
     Canvas _canvas;
     Color _color;
@@ -13,6 +13,7 @@ class Layer
         _color = color;
         _vertices = new List<Vertex>();
         _canvas = new Canvas(context, color);
+        Transform = new Transform();
     }
 
     public void AddVertex(Vertex vertex)
@@ -58,7 +59,7 @@ class Layer
 
     public void Draw(Camera camera)
     {
-        _canvas.Draw(camera.Transform);
+        _canvas.Draw(camera.Transform, Transform);
     }
 
     public void Clear()
@@ -76,6 +77,12 @@ class Layer
     {
         set => _canvas.DrawLast = value;
         get => _canvas.DrawLast;
+    }
+
+    public bool ApplyLayerTransform
+    {
+        set => _canvas.ApplyCanvasTransform = value;
+        get => _canvas.ApplyCanvasTransform;
     }
 
     private float[] GetVerticesAsBufferData()
