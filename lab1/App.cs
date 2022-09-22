@@ -270,12 +270,15 @@ class App
                 _camera.Transform.Scale += scroll.Y * 0.1f;
                 _camera.Transform.Scale = _camera.Transform.Scale >= 0.5f ? _camera.Transform.Scale : 0.5f;
 
-                layers[layerID].ChangeLastVertex(
-                    new Vertex(
-                        (-_camera.CameraPosition.X + (2.0f * (_mouse.Position.X) / _window.Size.X - 1.0f)) / (_camera.Transform.Scale),
-                        (-_camera.CameraPosition.Y - (2.0f * (_mouse.Position.Y) / _window.Size.Y - 1.0f)) / (_camera.Transform.Scale)
-                    )
-                );
+                if (_mode == AppMode.DRAW_LAYER_MODE)
+                {
+                    layers[layerID].ChangeLastVertex(
+                        new Vertex(
+                            (-_camera.CameraPosition.X + (2.0f * (_mouse.Position.X) / _window.Size.X - 1.0f)) / (_camera.Transform.Scale),
+                            (-_camera.CameraPosition.Y - (2.0f * (_mouse.Position.Y) / _window.Size.Y - 1.0f)) / (_camera.Transform.Scale)
+                        )
+                    );
+                }
             };
         }
 
