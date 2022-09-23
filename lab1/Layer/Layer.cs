@@ -6,14 +6,16 @@ class Layer
     List<Vertex> _vertices;
     Canvas _canvas;
     Color _color;
+    private float _zIndex = 0.0f;
     public float Hue = 0.0f; // KOLHOZ (TODO: Add to Color struct)
 
-    public Layer(GL context, Color color)
+    public Layer(GL context, Color color, float zIndex)
     {
         _color = color;
         _vertices = new List<Vertex>();
         _canvas = new Canvas(context, color);
         Transform = new Transform();
+        _zIndex = zIndex;
     }
 
     public void AddVertex(Vertex vertex)
@@ -53,7 +55,17 @@ class Layer
         set
         {
             _color = value;
-            _canvas.Color = value;
+            _canvas.Color = _color;
+        }
+    }
+
+    public float Transperent
+    {
+        get => _color.Alpha;
+        set
+        {
+            _color.Alpha = value;
+            _canvas.Color = _color;
         }
     }
 
@@ -93,7 +105,7 @@ class Layer
         {
             data[iData++] = _vertices[iVert].X;
             data[iData++] = _vertices[iVert].Y;
-            data[iData++] = 0.0f;
+            data[iData++] = _zIndex;
         }
 
         return data;

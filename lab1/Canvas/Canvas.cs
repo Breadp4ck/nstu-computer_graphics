@@ -61,7 +61,7 @@ class Canvas
         _vao.Bind();
 
         _context.PointSize(10f);
-        _context.LineWidth(2f);
+        _context.LineWidth(4f);
 
         _shader.Use();
 

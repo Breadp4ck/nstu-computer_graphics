@@ -33,6 +33,7 @@ class App
     private Vector2 offset = new Vector2(0.0f, 0.0f);
 
     bool dragging = false;
+    bool coloring = false;
     int layerID = 0;
     int canvasID = 0;
 
@@ -69,6 +70,13 @@ class App
         {
             _keyboard.KeyDown += (IKeyboard keyboard, Key key, int arg3) => // arg3 ???
             {
+                switch (key)
+                {
+                    case Key.ShiftLeft:
+                        coloring = true;
+                        break;
+                }
+
                 switch (_mode)
                 {
                     case AppMode.SPECTATE_MODE:
@@ -79,6 +87,8 @@ class App
                                 break;
 
                             case Key.Space:
+                                MakeAllLayersTransperent(0.2f);
+                                layers[layerID].Transperent = 1.0f;
                                 _mode = AppMode.WORKSPACE_MODE;
                                 break;
                         }
@@ -88,15 +98,20 @@ class App
                         switch (key)
                         {
                             case Key.Escape:
+                                MakeAllLayersTransperent(1.0f);
                                 _mode = AppMode.SPECTATE_MODE;
                                 break;
 
                             case Key.Z:
+                                layers[layerID].Transperent = 0.2f;
                                 layerID = (layerID == 0) ? layers.Count - 1 : layerID - 1;
+                                layers[layerID].Transperent = 1.0f;
                                 break;
 
                             case Key.X:
+                                layers[layerID].Transperent = 0.2f;
                                 layerID = (layerID == layers.Count - 1) ? 0 : layerID + 1;
+                                layers[layerID].Transperent = 1.0f;
                                 break;
 
                             case Key.N:
@@ -107,7 +122,7 @@ class App
                                 }
                                 else
                                 {
-                                    layers.Add(new Layer(_gl, Color.FromHSV(0.0f, 0.77f, 0.95f)));
+                                    layers.Add(new Layer(_gl, Color.FromHSV(0.0f, 0.77f, 0.95f), layerID * 0.001f));
                                     layerID += 1;
                                 }
                                 _mode = AppMode.EDIT_LAYER_MODE;
@@ -171,6 +186,16 @@ class App
                                 layers[layerID].RemoveLastVertex();
                                 break;
                         }
+                        break;
+                }
+            };
+
+            _keyboard.KeyUp += (IKeyboard keyboard, Key key, int arg3) => // arg3 ???
+            {
+                switch (key)
+                {
+                    case Key.ShiftLeft:
+                        coloring = false;
                         break;
                 }
             };
@@ -263,26 +288,33 @@ class App
 
             _mouse.Scroll += (IMouse _mouse, ScrollWheel scroll) =>
             {
-                // TODO: It's cringe
-                layers[layerID].Hue = (layers[layerID].Hue + 0.02f) % 1.0f;
-                layers[layerID].Color = Color.FromHSV(layers[layerID].Hue, 0.77f, 0.95f);
-
-                _camera.Transform.Scale += scroll.Y * 0.1f;
-                _camera.Transform.Scale = _camera.Transform.Scale >= 0.5f ? _camera.Transform.Scale : 0.5f;
-
-                if (_mode == AppMode.DRAW_LAYER_MODE)
+                if (coloring)
                 {
-                    layers[layerID].ChangeLastVertex(
-                        new Vertex(
-                            (-_camera.CameraPosition.X + (2.0f * (_mouse.Position.X) / _window.Size.X - 1.0f)) / (_camera.Transform.Scale),
-                            (-_camera.CameraPosition.Y - (2.0f * (_mouse.Position.Y) / _window.Size.Y - 1.0f)) / (_camera.Transform.Scale)
-                        )
-                    );
+                    // TODO: It's cringe
+                    layers[layerID].Hue = (layers[layerID].Hue + 0.02f) % 1.0f;
+                    layers[layerID].Color = Color.FromHSV(layers[layerID].Hue, 0.77f, 0.95f);
+                }
+                else
+                {
+                    _camera.Transform.Scale += scroll.Y * 0.1f;
+                    _camera.Transform.Scale = _camera.Transform.Scale <= 2.5f ? _camera.Transform.Scale : 2.5f;
+                    _camera.Transform.Scale = _camera.Transform.Scale >= 0.1f ? _camera.Transform.Scale : 0.1f;
+
+                    if (_mode == AppMode.DRAW_LAYER_MODE)
+                    {
+                        layers[layerID].ChangeLastVertex(
+                            new Vertex(
+                                (-_camera.CameraPosition.X + (2.0f * (_mouse.Position.X) / _window.Size.X - 1.0f)) / (_camera.Transform.Scale),
+                                (-_camera.CameraPosition.Y - (2.0f * (_mouse.Position.Y) / _window.Size.Y - 1.0f)) / (_camera.Transform.Scale)
+                            )
+                        );
+                    }
                 }
             };
         }
 
-        layers.Add(new Layer(_gl, Color.FromHSV(0.0f, 0.77f, 0.95f)));
+        layers.Add(new Layer(_gl, Color.FromHSV(0.0f, 0.77f, 0.95f), 0.001f));
+        layers[0].Transperent = 0.2f;
     }
 
     private unsafe void OnWindowRender(double _delta)
@@ -290,11 +322,11 @@ class App
         Color background = _mode switch
         {
             AppMode.SPECTATE_MODE => Color.FromHSV(0.0f, 0.2f, 0.3f),
-            AppMode.WORKSPACE_MODE => Color.FromHSV(0.1f, 0.2f, 0.3f),
-            AppMode.EDIT_LAYER_MODE => Color.FromHSV(0.2f, 0.2f, 0.3f),
-            AppMode.DRAW_LAYER_MODE => Color.FromHSV(0.3f, 0.2f, 0.3f),
-            AppMode.MOVE_LAYER_MODE => Color.FromHSV(0.5f, 0.2f, 0.3f),
-            AppMode.SCALE_LAYER_MODE => Color.FromHSV(0.7f, 0.2f, 0.3f),
+            AppMode.WORKSPACE_MODE => Color.FromHSV(0.2f, 0.2f, 0.3f),
+            AppMode.EDIT_LAYER_MODE => Color.FromHSV(0.4f, 0.2f, 0.3f),
+            AppMode.DRAW_LAYER_MODE => Color.FromHSV(0.6f, 0.2f, 0.3f),
+            AppMode.MOVE_LAYER_MODE => Color.FromHSV(0.7f, 0.2f, 0.3f),
+            AppMode.SCALE_LAYER_MODE => Color.FromHSV(0.8f, 0.2f, 0.3f),
             AppMode.ROTATE_LAYER_MODE => Color.FromHSV(0.9f, 0.2f, 0.3f),
             _ => Color.FromHSV(0.0f, 0.2f, 0.5f),
         };
@@ -320,5 +352,13 @@ class App
         _window.Resize -= OnWindowResize;
         _window.Render -= OnWindowRender;
         _window.Closing -= OnWindowClosing;
+    }
+
+    private void MakeAllLayersTransperent(float alpha)
+    {
+        foreach (var layer in layers)
+        {
+            layer.Transperent = alpha;
+        }
     }
 }
