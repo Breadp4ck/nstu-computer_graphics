@@ -2,7 +2,7 @@ using Silk.NET.OpenGL;
 using System.Numerics;
 
 
-namespace Lab1.Core.Shader
+namespace Lab1.Core.Shaders
 {
     public class Shader : IDisposable
     {

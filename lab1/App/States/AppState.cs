@@ -12,16 +12,16 @@ namespace Lab1.App.States
             _app = app;
         }
 
-        public void Enter() { }
-        public void Render(float delta) { }
-        public void Exit() { }
+        public virtual void Enter() { }
+        public virtual void Render(double delta) { }
+        public virtual void Exit() { }
 
-        public void OnKeyDown(IKeyboard keyboard, Key key, int arg3) { }
-        public void OnKeyUp(IKeyboard keyboard, Key key, int arg3) { }
+        public virtual void OnKeyDown(IKeyboard keyboard, Key key, int arg3) { }
+        public virtual void OnKeyUp(IKeyboard keyboard, Key key, int arg3) { }
 
-        public void OnMouseDown(IMouse mouse, MouseButton button) { }
-        public void OnMouseUp(IMouse mouse, MouseButton button) { }
-        public void OnMouseMove(IMouse mouse, System.Numerics.Vector2 position) { }
-        public void OnMouseScroll(IMouse _mouse, ScrollWheel scroll) { }
+        public virtual void OnMouseDown(IMouse mouse, MouseButton button) { }
+        public virtual void OnMouseUp(IMouse mouse, MouseButton button) { }
+        public virtual void OnMouseMove(IMouse mouse, System.Numerics.Vector2 position) { }
+        public virtual void OnMouseScroll(IMouse _mouse, ScrollWheel scroll) { }
     }
 }

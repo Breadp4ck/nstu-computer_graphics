@@ -67,9 +67,9 @@ namespace Lab1.App
             get => new Color(_color.X, _color.Y, _color.Z);
             set
             {
-                _color.X = Color.Red;
-                _color.Y = Color.Green;
-                _color.Z = Color.Blue;
+                _color.X = value.Red;
+                _color.Y = value.Green;
+                _color.Z = value.Blue;
             }
         }
 
