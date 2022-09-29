@@ -1,10 +1,10 @@
-using Silk.NET.OpenGL;
+using Lab1.Render;
 
 namespace Lab1.Core.Shaders
 {
     static class ShaderLibrary
     {
-        public static Shader ColorShader(GL context)
+        public static ShaderProgram ColorShader(ShaderContext context)
         {
             string vertColorSource = @"#version 330 core
                 layout (location = 0) in vec3 vPos;
@@ -28,7 +28,14 @@ namespace Lab1.Core.Shaders
                 }
             ";
 
-            return new Shader(context, vertColorSource, fragColorSource);
+            Shader vert = new Shader(context, ShaderType.VertexShader, vertColorSource);
+            Shader frag = new Shader(context, ShaderType.FragmentShader, fragColorSource);
+
+            ShaderProgram program = new ShaderProgram(context);
+            program.AttachShader(vert);
+            program.AttachShader(frag);
+
+            return program;
         }
     }
 }

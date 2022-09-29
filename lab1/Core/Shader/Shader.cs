@@ -1,122 +1,42 @@
-using Silk.NET.OpenGL;
 using System.Numerics;
+
+using Lab1.Render;
 
 
 namespace Lab1.Core.Shaders
 {
     public class Shader : IDisposable
     {
-        private uint _shaderProgram;
-        private GL _context;
+        private ShaderContext _context;
+        private uint _shader;
 
-        public Shader(GL context, string vertexShaderSource, string fragmentShaderSource)
+        public Shader(ShaderContext context, ShaderType type, string source)
         {
             _context = context;
 
-            uint vertexShader = CompileShader(ShaderType.VertexShader, vertexShaderSource);
-            uint fragmentShader = CompileShader(ShaderType.FragmentShader, fragmentShaderSource);
-
-            _shaderProgram = CreateShaderProgram(vertexShader, fragmentShader);
-
-            context.DeleteShader(vertexShader);
-            context.DeleteShader(fragmentShader);
+            uint _shader = context.CreateShader(type, source);
         }
 
-        static Shader FromFiles(GL context, string vertexShaderSourcePath, string fragmentShaderSourcePath)
+        static Shader FromFiles(ShaderContext context, ShaderType type, string path)
         {
-            string vertexShaderSource = File.ReadAllText(vertexShaderSourcePath);
-            string fragmentShaderSource = File.ReadAllText(fragmentShaderSourcePath);
+            string source = File.ReadAllText(path);
 
-            return new Shader(context, vertexShaderSource, fragmentShaderSource);
+            return new Shader(context, type, source);
         }
 
-        private uint CompileShader(ShaderType type, string source)
+        internal uint GetDescriptor()
         {
-            uint shader = _context.CreateShader(type);
-            _context.ShaderSource(shader, source);
-            _context.CompileShader(shader);
-
-            CompileShaderLog(shader);
-
-            return shader;
+            return _shader;
         }
 
-        private void CompileShaderLog(uint shader)
+        public void DeleteShader()
         {
-            string infoLog = _context.GetShaderInfoLog(shader);
-
-            if (!string.IsNullOrWhiteSpace(infoLog))
-            {
-                throw new Exception($"Error compiling shader '{shader}': {infoLog}");
-            }
-        }
-
-        private uint CreateShaderProgram(uint vertexShader, uint fragmentShader)
-        {
-            uint shaderProgram = _context.CreateProgram();
-            _context.AttachShader(shaderProgram, vertexShader);
-            _context.AttachShader(shaderProgram, fragmentShader);
-            _context.LinkProgram(shaderProgram);
-
-            return shaderProgram;
-        }
-
-        public void Use()
-        {
-            _context.UseProgram(_shaderProgram);
-        }
-
-        public void SetUniform(string name, int value)
-        {
-            int location = _context.GetUniformLocation(_shaderProgram, name);
-
-            if (location == -1)
-            {
-                throw new Exception($"{name} uniform not found on shader.");
-            }
-
-            _context.Uniform1(location, value);
-        }
-
-        public void SetUniform(string name, float x, float y, float z)
-        {
-            int location = _context.GetUniformLocation(_shaderProgram, name);
-
-            if (location == -1)
-            {
-                throw new Exception($"{name} uniform not found on shader.");
-            }
-
-            _context.Uniform3(location, x, y, z);
-        }
-
-        public void SetUniform(string name, float x, float y, float z, float w)
-        {
-            int location = _context.GetUniformLocation(_shaderProgram, name);
-
-            if (location == -1)
-            {
-                throw new Exception($"{name} uniform not found on shader.");
-            }
-
-            _context.Uniform4(location, x, y, z, w);
-        }
-
-        public unsafe void SetUniform(string name, Matrix4x4 value)
-        {
-            int location = _context.GetUniformLocation(_shaderProgram, name);
-
-            if (location == -1)
-            {
-                throw new Exception($"{name} uniform not found on shader.");
-            }
-
-            _context.UniformMatrix4(location, 1, false, (float*)&value);
+            _context.DeleteShader(_shader);
         }
 
         public void Dispose()
         {
-            _context.DeleteProgram(_shaderProgram);
+            _context.DeleteShader(_shader);
         }
     }
 }
