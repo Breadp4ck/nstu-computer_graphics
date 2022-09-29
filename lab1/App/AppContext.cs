@@ -43,6 +43,7 @@ namespace Lab1.App
 
                 Gl!.Enable(EnableCap.DepthTest);
                 Gl!.Enable(EnableCap.Blend);
+                Gl!.Enable(EnableCap.LineSmooth);
                 Gl!.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             }
         }

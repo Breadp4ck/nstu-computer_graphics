@@ -18,13 +18,14 @@ namespace Lab1.App
         private Camera _camera = new Camera();
 
         private System.Numerics.Vector2 previousPosition = new System.Numerics.Vector2(0.0f, 0.0f);
-        private Vector2 offset = new Vector2(0.0f, 0.0f);
 
-        bool Dragging { get; set; } = false;
+        public bool Dragging { get; set; } = false;
         public int LayerID = 0;
 
         private Dictionary<string, AppState> _states = new Dictionary<string, AppState>();
         public string CurrentState { get; private set; } = "Spectate";
+        public Vector2 MouseOffset { get; private set; } = new Vector2(0.0f, 0.0f);
+        public Vector2 MousePosition { get => _context.MousePosition; }
 
         public App()
         {
@@ -43,7 +44,7 @@ namespace Lab1.App
             _states.Add("Spectate", new States.Spectate(this));
             _states.Add("Workspace", new States.Workspace(this));
             _states.Add("Edit", new States.Edit(this));
-            _states.Add("Move", new States.Move(this));
+            _states.Add("Grab", new States.Grab(this));
             _states.Add("Scale", new States.Scale(this));
             _states.Add("Rotate", new States.Rotate(this));
 
@@ -111,7 +112,7 @@ namespace Lab1.App
                 Layers[LayerID].ChangeLastVertex(
                     new Vertex(
                         (-_camera.CameraPosition.X + (2.0f * (_context.MousePosition.X) / _window.Size.X - 1.0f)) / (_camera.Transform.Scale),
-                        (-_camera.CameraPosition.Y - (2.0f * (_context.MousePosition.Y) / _window.Size.Y - 1.0f)) / (_camera.Transform.Scale)
+                        (-_camera.CameraPosition.Y - (2.0f * (_context.MousePosition.Y) / _window.Size.Y - 1.0f)) / (_camera.Transform.Scale * _camera.ViewportRatioXY)
                     )
                 );
             }
@@ -128,7 +129,7 @@ namespace Lab1.App
             Layers[LayerID].AddVertex(
                 new Vertex(
                     (-_camera.CameraPosition.X + (2.0f * (_context.MousePosition.X) / _window.Size.X - 1.0f)) / (_camera.Transform.Scale),
-                    (-_camera.CameraPosition.Y - (2.0f * (_context.MousePosition.Y) / _window.Size.Y - 1.0f)) / (_camera.Transform.Scale)
+                    (-_camera.CameraPosition.Y - (2.0f * (_context.MousePosition.Y) / _window.Size.Y - 1.0f)) / (_camera.Transform.Scale * _camera.ViewportRatioXY)
                 )
             );
         }
@@ -151,16 +152,18 @@ namespace Lab1.App
 
                 _context.Mouse.MouseMove += (IMouse mouse, System.Numerics.Vector2 position) =>
                 {
-                    offset = position - previousPosition;
+                    Vector2 offset = position - previousPosition;
                     offset.Y *= -1.0f;
                     previousPosition = position;
+
+                    MouseOffset = offset;
 
                     if (Dragging)
                     {
                         Vector3 pos = _camera.CameraPosition;
 
-                        pos.X += offset.X * 0.002f;
-                        pos.Y += offset.Y * 0.002f;
+                        pos.X += MouseOffset.X * 0.002f;
+                        pos.Y += MouseOffset.Y * 0.002f;
 
                         _camera.CameraPosition = new System.Numerics.Vector3(pos.X, pos.Y, pos.Z);
                     };
@@ -201,6 +204,7 @@ namespace Lab1.App
         {
             _context.Gl!.Viewport(size);
             _context.Gui!.SetViewportSize(new Vector2(size.X, size.Y));
+            _camera.ViewportSize = new Vector2(size.X, size.Y);
         }
 
         private void OnWindowClosing()

@@ -7,6 +7,11 @@ namespace Lab1.App.States
     {
         public Spectate(App app) : base(app) { }
 
+        public override void Enter()
+        {
+            _app.MakeAllLayersTransperent(1.0f);
+        }
+
         public override void OnKeyDown(IKeyboard keyboard, Key key, int arg3)
         {
             switch (key)
@@ -16,9 +21,6 @@ namespace Lab1.App.States
                     break;
 
                 case Key.Space:
-                    _app.MakeAllLayersTransperent(0.2f);
-                    _app.Layers[_app.LayerID].Transperent = 1.0f;
-
                     _app.ChangeState("Workspace");
                     break;
             }

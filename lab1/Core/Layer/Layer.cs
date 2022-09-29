@@ -74,7 +74,7 @@ namespace Lab1.Core
 
         public void Draw(Camera camera)
         {
-            _canvas.Draw(camera.Transform, Transform);
+            _canvas.Draw(camera, Transform);
         }
 
         public void Clear()

@@ -3,22 +3,25 @@ using System.Numerics;
 
 namespace Lab1.App.States
 {
-    public class Scale : AppState
+    public class Grab : AppState
     {
         private Vector2 _initialMousePosition = Vector2.Zero;
-        private float _initialScaleFactor = 1.0f;
+        private Vector2 _initialPosition = Vector2.Zero;
 
-        public Scale(App app) : base(app) { }
+        public Grab(App app) : base(app) { }
 
         public override void Enter()
         {
             _initialMousePosition = _app.MousePosition;
-            _initialScaleFactor = _app.Layers[_app.LayerID].Transform.Scale;
+
+            var position = _app.Layers[_app.LayerID].Transform.Position;
+            _initialPosition = new Vector2(position.X, position.Y);
         }
 
         public override void Exit()
         {
-            _initialScaleFactor = _app.Layers[_app.LayerID].Transform.Scale;
+            var position = _app.Layers[_app.LayerID].Transform.Position;
+            _initialPosition = new Vector2(position.X, position.Y);
         }
 
         public override void OnKeyDown(IKeyboard keyboard, Key key, int arg3)
@@ -49,7 +52,11 @@ namespace Lab1.App.States
         {
             _app.UpdateHoverVertexPosition();
 
-            _app.Layers[_app.LayerID].Transform.Scale = _initialScaleFactor + (_initialMousePosition.X - _app.MousePosition.X) * 0.01f;
+            Vector2 offset = _initialMousePosition - _app.MousePosition;
+            offset.X = -offset.X;
+
+            Vector2 pos = _initialPosition + offset * 0.002f;
+            _app.Layers[_app.LayerID].Transform.Position = new Vector3(pos.X, pos.Y, 0.0f);
         }
     }
 }

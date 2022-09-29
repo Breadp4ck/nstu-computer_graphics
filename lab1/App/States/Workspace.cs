@@ -1,6 +1,4 @@
 using Silk.NET.Input;
-using Lab1.App.States;
-using Lab1.Core;
 
 namespace Lab1.App.States
 {
@@ -8,12 +6,17 @@ namespace Lab1.App.States
     {
         public Workspace(App app) : base(app) { }
 
+        public override void Enter()
+        {
+            _app.MakeAllLayersTransperent(0.2f);
+            _app.Layers[_app.LayerID].Transperent = 1.0f;
+        }
+
         public override void OnKeyDown(IKeyboard keyboard, Key key, int arg3)
         {
             switch (key)
             {
                 case Key.Escape:
-                    _app.MakeAllLayersTransperent(1.0f);
                     _app.ChangeState("Spectate");
                     break;
 
@@ -39,22 +42,26 @@ namespace Lab1.App.States
                         _app.LayerID = _app.Layers.Count - 1;
                     }
 
-                    _app.MakeAllLayersTransperent(0.2f);
-                    _app.Layers[_app.LayerID].Transperent = 1.0f;
-
                     _app.ChangeState("Edit");
-                    _app.AddHoverVertex();
+                    break;
 
+                case Key.G:
+                    _app.ChangeState("Grab");
                     break;
 
                 case Key.R:
-                    _app.RemoveLayer();
+                    _app.ChangeState("Rotate");
+                    // _app.RemoveLayer();
+                    break;
+
+
+                case Key.S:
+                    _app.ChangeState("Scale");
                     break;
 
 
                 case Key.Space:
                     _app.ChangeState("Edit");
-                    _app.AddHoverVertex();
                     break;
             }
         }

@@ -61,14 +61,15 @@ namespace Lab1.Core
             _vertices[_vertices.Length - 1] = z;
         }
 
-        public unsafe void Draw(Transform cameraTransform, Transform layerTransform)
+        public unsafe void Draw(Camera camera, Transform layerTransform)
         {
             UpdateBuffer();
 
             _vao.Bind();
 
-            _context.PointSize(10f);
-            _context.LineWidth(4f);
+            // TODO: Deprecated
+            _context.PointSize(10.0f);
+            _context.LineWidth(2.0f);
 
             _shader.Use();
 
@@ -80,9 +81,9 @@ namespace Lab1.Core
             }
 
             _shader.SetUniform("color", _color.Red, _color.Green, _color.Blue, _color.Alpha);
-            _shader.SetUniform("model", model * cameraTransform.Scale);
-            _shader.SetUniform("view", cameraTransform.ViewMatrix);
-            _shader.SetUniform("projection", Matrix4x4.CreateOrthographic(2.0f, 2.0f, 1e-3f, 1e2f));
+            _shader.SetUniform("model", model * camera.Transform.Scale);
+            _shader.SetUniform("view", camera.Transform.ViewMatrix);
+            _shader.SetUniform("projection", Matrix4x4.CreateOrthographic(2.0f, 2.0f * camera.ViewportRatioYX, 1e-3f, 1e2f));
 
 
             _context.DrawArrays(PrimitiveType.LineStrip, 0, (uint)_vertices.Length / 3);
