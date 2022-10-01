@@ -2,7 +2,7 @@ using Lab1.Input;
 
 namespace Lab1.Scene
 {
-    public abstract class Node
+    public class Node
     {
         private Scene _scene;
         public string Name { get; private set; }

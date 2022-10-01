@@ -1,28 +1,46 @@
 using Silk.NET.OpenGL;
-using Silk.NET.Windowing;
-using Silk.NET.Input;
+using System.Numerics;
 
 namespace Lab1.Render
 {
     public class RenderServer
     {
-        private IWindow _window;
-        private IInputContext _input;
         private GL _gl;
+        private ShaderContext _shaderContext;
 
-        public RenderServer(IWindow window, GL gl, IInputContext input)
+        public RenderServer(GL gl)
         {
-            _window = window;
-            _input = input;
             _gl = gl;
+            _shaderContext = new ShaderContext(_gl);
         }
 
-        public void Render(Viewport viewport, IRenderable visualInstance)
+        public void Load(IRenderable renderable)
         {
-            if ((viewport.Camera.VisualMask & visualInstance.VisualMask) > 0)
+            BufferObject<float> vbo = new BufferObject<float>(_gl, renderable.Vertices, BufferTargetARB.ArrayBuffer, BufferUsageARB.DynamicCopy);
+
+            VertexArrayObject<float> vao = new VertexArrayObject<float>(_gl, vbo, VertexAttribPointerType.Float);
+            vao.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, 0, 0);
+
+            renderable.Initialize(_shaderContext, vao, vbo);
+        }
+
+        public void Render(Viewport viewport, IRenderable renderable)
+        {
+            if ((viewport.Camera.VisualMask & renderable.VisualMask) > 0)
             {
-                visualInstance.Draw(viewport.Camera);
+                renderable.Vao!.Bind();
+                _gl.PointSize(100.0f);
+
+                renderable.Material.Use(viewport, renderable.Transform);
+                // renderable.Draw(viewport.Camera);
+
+                _gl.DrawArrays(PrimitiveType.Points, 0, (uint)renderable.Vertices.Length / 3);
             }
+        }
+
+        public void ChangeContextSize(Vector2 size)
+        {
+            _gl.Viewport(0, 0, (uint)size.X, (uint)size.Y);
         }
     }
 }

@@ -1,6 +1,6 @@
-using Lab1.Render;
+using Lab1.Math;
 
-namespace Lab1.Core
+namespace Lab1.Render
 {
     public abstract class Material
     {
@@ -11,6 +11,6 @@ namespace Lab1.Core
             _context = context;
         }
 
-        public virtual void Use() { }
+        internal virtual void Use(Viewport viewport, Transform instanceTransform) { }
     }
 }

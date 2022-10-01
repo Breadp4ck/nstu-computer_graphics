@@ -1,6 +1,4 @@
-using Lab1.Render;
-
-namespace Lab1.Core.Shaders
+namespace Lab1.Render
 {
     static class ShaderLibrary
     {

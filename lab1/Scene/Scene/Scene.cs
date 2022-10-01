@@ -1,44 +1,63 @@
-using Silk.NET.OpenGL;
-using Silk.NET.Windowing;
-using Silk.NET.Input;
-
 using Lab1.Render;
+using Lab1.Window;
+
+using System.Numerics;
 
 namespace Lab1.Scene
 {
     public class Scene : MainLoop
     {
-        private List<IRenderable> _visualInstances = new List<IRenderable>();
-        private List<Camera> _cameras = new List<Camera>();
+        private List<Node> _nodes = new List<Node>();
         private List<Viewport> _viewports = new List<Viewport>();
-        private int _currentCameraId = -1;
 
-        public Scene(IWindow window, GL gl, IInputContext input) : base(window, gl, input) { }
+        private WindowServer _window;
+        private RenderServer _renderServer;
 
-        public override void Render()
+
+        public Scene() : base()
         {
-            base.Render();
+            _window = new WindowServer();
+            _renderServer = new RenderServer(_window.GetGlContext());
 
-            if (_currentCameraId >= 0)
+            _window.OnWindowStartsRender += Process;
+        }
+
+        public void AddNode(Node node)
+        {
+            _nodes.Add(node);
+
+            if (node is IRenderable)
             {
-                foreach (var visualInstance in _visualInstances)
+                _renderServer.Load((IRenderable)node);
+            }
+        }
+
+        protected override void Process(float delta)
+        {
+            base.Process(delta);
+
+            // It must be in WindowServer, but there it is not working
+            // I mean, _gl.Viewport(size);
+            _renderServer.ChangeContextSize(_window.WindowSize);
+
+            foreach (var node in _nodes)
+            {
+                node.Process(delta);
+
+                if (node is IRenderable)
                 {
-                    visualInstance.Draw(_cameras[_currentCameraId]);
+                    foreach (var viewport in _viewports)
+                    {
+                        _renderServer.Render(viewport, (IRenderable)node);
+                    }
                 }
             }
         }
 
-        public void AttachCamera(Camera camera)
+        public void AttachViewport()
         {
-            _cameras.Add(camera);
-        }
-
-        public void SelectCamera(int cameraId)
-        {
-            if (cameraId < _cameras.Count && cameraId >= 0)
-            {
-                _currentCameraId = cameraId;
-            }
+            var viewport = new Viewport(_window, new Camera3D());
+            _viewports.Add(viewport);
         }
     }
 }

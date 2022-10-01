@@ -1,59 +1,59 @@
-using Silk.NET.Input;
-using System.Numerics;
+// using Silk.NET.Input;
+// using System.Numerics;
 
-namespace Lab1.App.States
-{
-    public class Rotate : AppState
-    {
-        private Vector2 _initialMousePosition = Vector2.Zero;
-        private float _initialRotateFactor = 0.0f;
+// namespace Lab1.App.States
+// {
+//     public class Rotate : AppState
+//     {
+//         private Vector2 _initialMousePosition = Vector2.Zero;
+//         private float _initialRotateFactor = 0.0f;
 
-        public Rotate(App app) : base(app) { }
+//         public Rotate(App app) : base(app) { }
 
-        public override void Enter()
-        {
-            _initialMousePosition = _app.MousePosition;
-            // _initialRotateFactor = 
-        }
+//         public override void Enter()
+//         {
+//             _initialMousePosition = _app.MousePosition;
+//             // _initialRotateFactor = 
+//         }
 
-        public override void Exit()
-        {
-            _initialRotateFactor = _initialRotateFactor + (_initialMousePosition.X - _app.MousePosition.X) * 0.01f;
-        }
+//         public override void Exit()
+//         {
+//             _initialRotateFactor = _initialRotateFactor + (_initialMousePosition.X - _app.MousePosition.X) * 0.01f;
+//         }
 
-        public override void OnKeyDown(IKeyboard keyboard, Key key, int arg3)
-        {
-            switch (key)
-            {
-                case Key.Escape:
-                    _app.ChangeState("Workspace");
-                    break;
-            }
-        }
+//         public override void OnKeyDown(IKeyboard keyboard, Key key, int arg3)
+//         {
+//             switch (key)
+//             {
+//                 case Key.Escape:
+//                     _app.ChangeState("Workspace");
+//                     break;
+//             }
+//         }
 
-        public override void OnMouseDown(IMouse mouse, MouseButton button)
-        {
-            switch (button)
-            {
-                case MouseButton.Left:
-                    _app.ChangeState("Workspace");
-                    break;
+//         public override void OnMouseDown(IMouse mouse, MouseButton button)
+//         {
+//             switch (button)
+//             {
+//                 case MouseButton.Left:
+//                     _app.ChangeState("Workspace");
+//                     break;
 
-                case MouseButton.Right:
-                    _app.ChangeState("Workspace");
-                    break;
-            }
-        }
+//                 case MouseButton.Right:
+//                     _app.ChangeState("Workspace");
+//                     break;
+//             }
+//         }
 
-        public override void OnMouseMove(IMouse mouse, System.Numerics.Vector2 position)
-        {
-            _app.UpdateHoverVertexPosition();
+//         public override void OnMouseMove(IMouse mouse, System.Numerics.Vector2 position)
+//         {
+//             _app.UpdateHoverVertexPosition();
 
-            _app.Layers[_app.LayerID].Transform.Rotation = Quaternion.CreateFromRotationMatrix(
-                Matrix4x4.CreateRotationZ(
-                    _initialRotateFactor + (_initialMousePosition.X - _app.MousePosition.X) * 0.01f
-                )
-            );
-        }
-    }
-}
+//             _app.Layers[_app.LayerID].Transform.Rotation = Quaternion.CreateFromRotationMatrix(
+//                 Matrix4x4.CreateRotationZ(
+//                     _initialRotateFactor + (_initialMousePosition.X - _app.MousePosition.X) * 0.01f
+//                 )
+//             );
+//         }
+//     }
+// }

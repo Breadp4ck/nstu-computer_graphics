@@ -1,10 +1,4 @@
-using Silk.NET.OpenGL;
-using System.Numerics;
-
-using Lab1.Render;
-
-
-namespace Lab1.Core.Shaders
+namespace Lab1.Render
 {
     public class ShaderProgram : IDisposable
     {

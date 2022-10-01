@@ -1,9 +1,4 @@
-using System.Numerics;
-
-using Lab1.Render;
-
-
-namespace Lab1.Core.Shaders
+namespace Lab1.Render
 {
     public class Shader : IDisposable
     {
@@ -13,8 +8,7 @@ namespace Lab1.Core.Shaders
         public Shader(ShaderContext context, ShaderType type, string source)
         {
             _context = context;
-
-            uint _shader = context.CreateShader(type, source);
+            _shader = context.CreateShader(type, source);
         }
 
         static Shader FromFiles(ShaderContext context, ShaderType type, string path)
