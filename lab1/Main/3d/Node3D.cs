@@ -1,11 +1,18 @@
+using System.Numerics;
 using ReMath = Lab1.Math;
 
-namespace Lab1.Scene.Scene3D
+namespace Lab1.Main.Scene3D
 {
     public class Node3D : Node
     {
         public ReMath.Transform Transform { get; set; } = new ReMath.Transform();
 
         public Node3D(Scene scene, string name) : base(scene, name) { }
+
+
+        public void Translate(Vector3 offset)
+        {
+            Transform.Position += offset;
+        }
     }
 }

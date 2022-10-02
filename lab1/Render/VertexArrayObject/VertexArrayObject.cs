@@ -8,7 +8,7 @@ namespace Lab1.Render
         private uint _handle;
         private GL _gl;
 
-        public VertexArrayObject(GL gl, BufferObject<TVertexType> vbo, VertexAttribPointerType type)
+        public VertexArrayObject(GL gl, BufferObject<TVertexType> vbo, BufferObject<ushort> ebo, VertexAttribPointerType type)
         {
             _gl = gl;
 
@@ -16,6 +16,7 @@ namespace Lab1.Render
             Bind();
 
             vbo.Bind();
+            ebo.Bind();
         }
 
         public unsafe void VertexAttributePointer(uint index, int count, VertexAttribPointerType type, uint vertexSize, int offset)

@@ -1,4 +1,4 @@
-namespace Lab1.Scene
+namespace Lab1.Main
 {
     public abstract class MainLoop
     {

@@ -9,11 +9,12 @@ namespace Lab1.Render
         public Transform Transform { get; }
         public VertexArrayObject<float>? Vao { get; }
         public BufferObject<float>? Vbo { get; }
+        public BufferObject<ushort>? Ebo { get; }
         public float[] Vertices { get; }
         public ushort[] Indices { get; }
 
-        public void Initialize(ShaderContext context, VertexArrayObject<float> vao, BufferObject<float> vbo);
-        public void Draw(Camera camera);
+        public void Initialize(ShaderContext context, VertexArrayObject<float> vao, BufferObject<float> vbo, BufferObject<ushort> ebo);
+        public void Draw(ICamera camera);
     }
 }
 

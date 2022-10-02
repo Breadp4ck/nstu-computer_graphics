@@ -1,6 +1,6 @@
 using Lab1.Input;
 
-namespace Lab1.Scene
+namespace Lab1.Main
 {
     public class Node
     {

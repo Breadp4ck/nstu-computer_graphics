@@ -76,15 +76,6 @@ namespace Lab1.Window
 
         private void OnWindowRender(double delta)
         {
-            _gl!.ClearColor(0.1f, 0.3f, 0.5f, 1.0f);
-
-            _gl!.Clear((uint)(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit));
-
-            _gl!.Enable(EnableCap.DepthTest);
-            _gl!.Enable(EnableCap.Blend);
-            _gl!.Enable(EnableCap.LineSmooth);
-            _gl!.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-
             if (OnWindowStartsRender != null)
             {
                 OnWindowStartsRender!.Invoke((float)delta);

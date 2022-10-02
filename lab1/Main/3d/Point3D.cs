@@ -1,6 +1,6 @@
 using Lab1.Core;
 
-namespace Lab1.Scene.Scene3D
+namespace Lab1.Main.Scene3D
 {
     public class Point3D : VisualInstance3D
     {

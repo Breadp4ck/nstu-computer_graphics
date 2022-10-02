@@ -9,18 +9,20 @@ namespace Lab1.Render
     public record struct Viewport
     {
         private WindowServer _windowServer;
-        public Camera Camera { get; set; }
+        public ICamera Camera { get; set; }
+        public IEnvironment Environment { get; set; }
 
 
-        public Viewport(WindowServer windowServer, Camera camera)
+        public Viewport(WindowServer windowServer, IEnvironment environment, ICamera camera)
         {
             _windowServer = windowServer;
+            Environment = environment;
             Camera = camera;
         }
 
         internal Matrix4x4 GetProjection()
         {
-            return Matrix4x4.CreateOrthographic(2.0f, 2.0f * GetRatioXY(), Camera.MinDistance, Camera.MaxDistance);
+            return Matrix4x4.CreateOrthographic(2.0f, 2.0f * GetRatioYX(), Camera.MinDistance, Camera.MaxDistance);
         }
 
         private float GetRatioXY()

@@ -1,9 +1,9 @@
 using Lab1.Render;
 using Lab1.Window;
 
-using System.Numerics;
+using Lab1.Main.Scene3D;
 
-namespace Lab1.Scene
+namespace Lab1.Main
 {
     public class Scene : MainLoop
     {
@@ -24,12 +24,12 @@ namespace Lab1.Scene
 
         public void AddNode(Node node)
         {
-            _nodes.Add(node);
-
             if (node is IRenderable)
             {
                 _renderServer.Load((IRenderable)node);
             }
+
+            _nodes.Add(node);
         }
 
         protected override void Process(float delta)
@@ -39,6 +39,11 @@ namespace Lab1.Scene
             // It must be in WindowServer, but there it is not working
             // I mean, _gl.Viewport(size);
             _renderServer.ChangeContextSize(_window.WindowSize);
+
+            foreach (var viewport in _viewports)
+            {
+                _renderServer.Render(viewport, viewport.Environment);
+            }
 
             foreach (var node in _nodes)
             {
@@ -56,7 +61,12 @@ namespace Lab1.Scene
 
         public void AttachViewport()
         {
-            var viewport = new Viewport(_window, new Camera3D());
+            var viewport = new Viewport(
+                _window,
+                new Environment3D(this, "DefaultEnvironment3D"),
+                new Camera3D(this, "DefaultCamera3D")
+            );
+
             _viewports.Add(viewport);
         }
     }
