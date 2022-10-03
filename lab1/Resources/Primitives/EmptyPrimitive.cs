@@ -7,7 +7,7 @@ namespace Lab1.Resources
         public float[] Vertices { get; private set; } = new float[0];
 
         public ushort[] Indices { get; } = new ushort[0];
-        public Material Material { get; set; }
+        public MaterialResource MaterialResource { get; set; } = new StandartMaterialResource();
 
     }
 }

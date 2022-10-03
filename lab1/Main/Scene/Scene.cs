@@ -13,16 +13,20 @@ namespace Lab1.Main
         private WindowServer _window;
         private RenderServer _renderServer;
 
+        public Node Root { get; init; }
+
 
         public Scene() : base()
         {
+            Root = new Node(this, "Root");
+
             _window = new WindowServer();
             _renderServer = new RenderServer(_window.GetGlContext());
 
             _window.OnWindowStartsRender += Process;
         }
 
-        public void AddNode(Node node)
+        internal void LoadNode(Node node)
         {
             if (node is IRenderable)
             {
@@ -63,8 +67,8 @@ namespace Lab1.Main
         {
             var viewport = new Viewport(
                 _window,
-                new Environment3D(this, "DefaultEnvironment3D"),
-                new Camera3D(this, "DefaultCamera3D")
+                new Environment3D("DefaultEnvironment3D"),
+                new Camera3D("DefaultCamera3D")
             );
 
             _viewports.Add(viewport);

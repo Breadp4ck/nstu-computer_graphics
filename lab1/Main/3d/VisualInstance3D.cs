@@ -1,23 +1,37 @@
 using Lab1.Render;
+using Lab1.Resources;
 
 namespace Lab1.Main.Scene3D
 {
     public abstract class VisualInstance3D : Node3D, IRenderable
     {
-        public VertexArrayObject<float>? Vao { get; private set; }
+        private MaterialResource _materialResource = new StandartMaterialResource();
+        public VertexArrayObject<float, ushort>? Vao { get; private set; }
         public BufferObject<float>? Vbo { get; private set; }
         public BufferObject<ushort>? Ebo { get; private set; }
         public virtual float[] Vertices { get; protected set; } = new float[0];
         public virtual ushort[] Indices { get; protected set; } = new ushort[0];
 
         public virtual short VisualMask { get; set; } = 1;
-        public Material? Material { get; set; }
+        public Material? Material { get; protected set; }
+        public MaterialResource MaterialResource
+        {
+            get => _materialResource;
+            set
+            {
+                if (Material != null)
+                {
+                    Material!.LoadResource(value);
+                }
+            }
+        }
 
-        public VisualInstance3D(Scene scene, string name) : base(scene, name) { }
+        public VisualInstance3D(string name) : base(name) { }
 
-        public void Initialize(ShaderContext context, VertexArrayObject<float> vao, BufferObject<float> vbo, BufferObject<ushort> ebo)
+        public void Initialize(ShaderContext context, VertexArrayObject<float, ushort> vao, BufferObject<float> vbo, BufferObject<ushort> ebo)
         {
             Material = new StandartMaterial(context);
+
             Vao = vao;
             Vbo = vbo;
             Ebo = ebo;

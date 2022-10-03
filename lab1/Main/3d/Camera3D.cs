@@ -12,7 +12,7 @@ namespace Lab1.Main.Scene3D
         private Vector3 _cameraUp = Vector3.UnitY;
         private Vector3 _cameraDirection = Vector3.Zero;
 
-        public Camera3D(Scene scene, string name) : base(scene, name) { }
+        public Camera3D(string name) : base(name) { }
 
         public short VisualMask { get; set; } = 1;
         public float MinDistance { get; set; } = 0.001f;

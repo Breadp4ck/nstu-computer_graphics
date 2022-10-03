@@ -34,6 +34,7 @@ namespace Lab1.Window
 
             options.Title = "Simple Drawer";
             options.Size = new Vector2D<int>(1280, 720);
+            options.PreferredDepthBufferBits = 1;
 
             _window = Silk.NET.Windowing.Window.Create(options);
 
@@ -44,7 +45,7 @@ namespace Lab1.Window
 
             _window.Initialize();
 
-            Thread thread = new Thread(_window.Run);
+            Thread thread = new Thread(_window.Run); // i have to remove this shit
             thread.Start();
         }
 

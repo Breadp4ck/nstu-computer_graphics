@@ -1,4 +1,6 @@
 using Lab1.Resources;
+using Lab1.Render;
+using Lab1.Core;
 
 namespace Lab1.Main.Scene3D
 {
@@ -12,12 +14,12 @@ namespace Lab1.Main.Scene3D
             {
                 Indices = value.Indices;
                 Vertices = value.Vertices;
-                Material = value.Material;
+                MaterialResource = value.MaterialResource;
 
                 _meshData = value;
             }
         }
 
-        public GeometryInstance3D(Scene scene, string name) : base(scene, name) { }
+        public GeometryInstance3D(string name) : base(name) { }
     }
 }

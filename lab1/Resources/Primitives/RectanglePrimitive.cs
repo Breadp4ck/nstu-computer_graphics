@@ -18,6 +18,6 @@ namespace Lab1.Resources
             0, 2, 3
         };
 
-        public Material Material { get; set; }
+        public MaterialResource MaterialResource { get; set; } = new StandartMaterialResource();
     }
 }

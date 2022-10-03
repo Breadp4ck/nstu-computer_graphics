@@ -9,6 +9,6 @@ namespace Lab1.Main.Scene3D
 
         public override float[] Vertices { get; protected set; } = new float[3] { 0.0f, 0.0f, 0.0f };
 
-        public Point3D(Scene scene, string name) : base(scene, name) { }
+        public Point3D(string name) : base(name) { }
     }
 }

@@ -1,5 +1,3 @@
-using Lab1.Render;
-
 namespace Lab1.Resources
 {
     public class TrianglePrimitive : IPrimitive
@@ -12,6 +10,6 @@ namespace Lab1.Resources
         };
 
         public ushort[] Indices { get; } = new ushort[3] { 0, 1, 2 };
-        public Material Material { get; set; }
+        public MaterialResource MaterialResource { get; set; } = new StandartMaterialResource();
     }
 }

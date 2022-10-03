@@ -8,6 +8,6 @@ namespace Lab1.Main.Scene3D
         public Color Ambient { get; set; } = new Color();
         public Color SkyColor { get; set; } = new Color();
 
-        public Environment3D(Scene scene, string name) : base(scene, name) { }
+        public Environment3D(string name) : base(name) { }
     }
 }

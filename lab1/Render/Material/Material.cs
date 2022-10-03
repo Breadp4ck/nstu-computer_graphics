@@ -1,4 +1,5 @@
 using Lab1.Math;
+using Lab1.Resources;
 
 namespace Lab1.Render
 {
@@ -12,5 +13,7 @@ namespace Lab1.Render
         }
 
         internal virtual void Use(Viewport viewport, Transform instanceTransform) { }
+
+        public virtual void LoadResource(MaterialResource resource) { }
     }
 }

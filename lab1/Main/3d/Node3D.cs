@@ -7,7 +7,7 @@ namespace Lab1.Main.Scene3D
     {
         public ReMath.Transform Transform { get; set; } = new ReMath.Transform();
 
-        public Node3D(Scene scene, string name) : base(scene, name) { }
+        public Node3D(string name) : base(name) { }
 
 
         public void Translate(Vector3 offset)
