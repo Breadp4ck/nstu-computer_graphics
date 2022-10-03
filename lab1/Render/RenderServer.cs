@@ -20,7 +20,12 @@ namespace Lab1.Render
             BufferObject<ushort> ebo = new BufferObject<ushort>(_gl, renderable.Indices, BufferTargetARB.ElementArrayBuffer, BufferUsageARB.DynamicCopy);
 
             VertexArrayObject<float, ushort> vao = new VertexArrayObject<float, ushort>(_gl, vbo, ebo);
-            vao.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, 0, 0);
+            vao.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, 3, 0);
+
+            // Next chapter in engine development
+            // vao.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, 8, 0);
+            // vao.VertexAttributePointer(1, 3, VertexAttribPointerType.Float, 8, 3);
+            // vao.VertexAttributePointer(2, 2, VertexAttribPointerType.Float, 8, 6);
 
             renderable.Initialize(_shaderContext, vao, vbo, ebo);
         }
@@ -37,9 +42,12 @@ namespace Lab1.Render
 
                 unsafe
                 {
-                    _gl.DrawElements(PrimitiveType.Points, (uint)renderable.Indices.Length, DrawElementsType.UnsignedShort, null);
+                    // TODO: It's cringe, but if it will be removed,
+                    // then indices will be broken (opengl will use indices of the next IRenderable)
+                    // idk why it's working this way, but it has to be I think
+                    renderable.Ebo!.Update(renderable.Indices);
 
-                    // _gl.DrawArrays(PrimitiveType.Points, 0, (uint)(renderable.Vertices.Length / 3));
+                    _gl.DrawElements(PrimitiveType.Triangles, (uint)renderable.Indices.Length, DrawElementsType.UnsignedShort, null);
                 }
 
             }

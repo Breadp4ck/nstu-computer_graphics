@@ -26,6 +26,14 @@ namespace Lab1.Main
             _window.OnWindowStartsRender += Process;
         }
 
+        public void Run()
+        {
+            while (_window.Running)
+            {
+                _window.Render();
+            }
+        }
+
         internal void LoadNode(Node node)
         {
             if (node is IRenderable)

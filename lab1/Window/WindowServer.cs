@@ -28,6 +28,8 @@ namespace Lab1.Window
 
         public Vector2 WindowSize { get; private set; } = Vector2.Zero;
 
+        public bool Running { get => !_window.IsClosing; }
+
         public WindowServer()
         {
             var options = WindowOptions.Default;
@@ -45,8 +47,19 @@ namespace Lab1.Window
 
             _window.Initialize();
 
-            Thread thread = new Thread(_window.Run); // i have to remove this shit
-            thread.Start();
+            // Multithreaded
+            // Requires also changes in Scene
+            // Thread thread = new Thread(_window.Run);
+            // thread.Start();
+        }
+
+        public void Render()
+        {
+            _window.DoEvents();
+            _window.DoUpdate();
+            _window.DoRender();
+
+            _window.ContinueEvents();
         }
 
         public void Close()
@@ -92,6 +105,8 @@ namespace Lab1.Window
             {
                 OnWindowResized!.Invoke(newSize);
             }
+
+            _gl!.Viewport(size);
         }
 
         private void OnWindowClosing()

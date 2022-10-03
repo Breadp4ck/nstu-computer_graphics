@@ -17,5 +17,22 @@ namespace Lab1.Main.Scene3D
         public short VisualMask { get; set; } = 1;
         public float MinDistance { get; set; } = 0.001f;
         public float MaxDistance { get; set; } = 100.0f;
+        public float Fov { get; set; } = Lab1.Math.Functions.ToRadians(70.0f);
+
+        public CameraMode Mode { get; set; } = CameraMode.Perspective;
+
+        public Matrix4x4 GetProjection(Vector2 viewportSize)
+        {
+            switch (Mode)
+            {
+                case CameraMode.Perspective:
+                    return Matrix4x4.CreatePerspectiveFieldOfView(Fov, viewportSize.X / viewportSize.Y, MinDistance, MaxDistance);
+
+                case CameraMode.Orthographic:
+                    return Matrix4x4.CreateOrthographic(2.0f, 2.0f * viewportSize.Y / viewportSize.X, MinDistance, MaxDistance);
+            }
+
+            return Matrix4x4.Identity; // Rust is better
+        }
     }
 }

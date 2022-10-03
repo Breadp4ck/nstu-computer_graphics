@@ -1,6 +1,3 @@
-
-using Silk.NET.Input;
-
 using System.Numerics;
 using Lab1.Window;
 
@@ -22,7 +19,7 @@ namespace Lab1.Render
 
         internal Matrix4x4 GetProjection()
         {
-            return Matrix4x4.CreateOrthographic(2.0f, 2.0f * GetRatioYX(), Camera.MinDistance, Camera.MaxDistance);
+            return Camera.GetProjection(_windowServer.WindowSize);
         }
 
         private float GetRatioXY()
