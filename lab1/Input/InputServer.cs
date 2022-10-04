@@ -24,17 +24,26 @@ namespace Lab1.Input
             _keyboard!.KeyUp += HandleRawKeyUpInput;
             _keyboard!.KeyDown += HandleRawKeyDownInput;
 
-            Actions["move_forward"] = new InputEventKey(this, KeyboardButton.W);
-            Actions["move_backward"] = new InputEventKey(this, KeyboardButton.S);
-            Actions["move_left"] = new InputEventKey(this, KeyboardButton.A);
-            Actions["move_right"] = new InputEventKey(this, KeyboardButton.D);
+            Actions["movement_forward"] = new InputEventKey(this, KeyboardButton.W);
+            Actions["movement_backward"] = new InputEventKey(this, KeyboardButton.S);
+            Actions["movement_left"] = new InputEventKey(this, KeyboardButton.A);
+            Actions["movement_right"] = new InputEventKey(this, KeyboardButton.D);
         }
 
         private void HandleRawKeyUpInput(IKeyboard keyboard, Key key, int arg3)
         {
             if (OnInputEmited != null)
             {
-                OnInputEmited!.Invoke(new InputEventKey(this, key, false));
+                var input = new InputEventKey(this, key, false);
+                OnInputEmited!.Invoke(input);
+
+                foreach (var (_, action) in Actions)
+                {
+                    if (action is InputEventKey && input.Button == ((InputEventKey)action).Button)
+                    {
+                        action.IsInvoked = input.IsInvoked;
+                    }
+                }
             }
         }
 
@@ -42,18 +51,27 @@ namespace Lab1.Input
         {
             if (OnInputEmited != null)
             {
-                OnInputEmited!.Invoke(new InputEventKey(this, key, true));
+                var input = new InputEventKey(this, key, true);
+                OnInputEmited!.Invoke(input);
+
+                foreach (var (_, action) in Actions)
+                {
+                    if (action is InputEventKey && input.Button == ((InputEventKey)action).Button)
+                    {
+                        action.IsInvoked = input.IsInvoked;
+                    }
+                }
             }
         }
 
-        public bool IsActionPressed(string inputName)
+        public bool IsActionPressed(string actionName)
         {
-            return Actions[inputName].IsInvoked;
+            return Actions[actionName].IsInvoked;
         }
 
-        public bool IsActionReleased(string inputName)
+        public bool IsActionReleased(string actionName)
         {
-            return !Actions[inputName].IsInvoked;
+            return !Actions[actionName].IsInvoked;
         }
     }
 }

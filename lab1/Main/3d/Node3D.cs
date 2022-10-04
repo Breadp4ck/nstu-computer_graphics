@@ -14,5 +14,10 @@ namespace Lab1.Main.Scene3D
         {
             Transform.Position += offset;
         }
+
+        public void Translate(float x, float y, float z)
+        {
+            Transform.Position += new Vector3(x, y, z);
+        }
     }
 }

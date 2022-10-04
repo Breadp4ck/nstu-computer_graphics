@@ -5,6 +5,7 @@ namespace Lab1.Main
     public class Node
     {
         public Scene? Scene { get; protected set; }
+        public InputServer? InputServer { get; protected set; }
         public Node? Parent { get; protected set; }
         public List<Node> Childs { get; protected set; } = new List<Node>();
         public string Name { get; private set; }
@@ -37,6 +38,11 @@ namespace Lab1.Main
 
         public virtual void Ready() { }
         public virtual void Process(float delta) { }
-        public virtual void Input(InputEvent delta) { }
+        public virtual void Input(InputEvent input) { }
+
+        public void AttachInputServer(InputServer server)
+        {
+            InputServer = server;
+        }
     }
 }

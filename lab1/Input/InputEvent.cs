@@ -12,11 +12,11 @@ namespace Lab1.Input
 
         public bool IsActionPressed(string actionName)
         {
-            foreach (var (name, _) in _server.Actions)
+            foreach (var (name, action) in _server.Actions)
             {
                 if (name == actionName)
                 {
-                    return true;
+                    return action.IsInvoked;
                 }
             }
 
@@ -25,11 +25,11 @@ namespace Lab1.Input
 
         public bool IsActionReleased(string actionName)
         {
-            foreach (var (name, _) in _server.Actions)
+            foreach (var (name, action) in _server.Actions)
             {
                 if (name == actionName)
                 {
-                    return true;
+                    return !action.IsInvoked;
                 }
             }
 

@@ -14,7 +14,7 @@ namespace Lab1.Input
 
     public class InputEventKey : InputEvent
     {
-        KeyboardButton Button { get; init; }
+        public KeyboardButton Button { get; init; }
         public InputEventKey(InputServer server, KeyboardButton button, bool isPressed = false) : base(server)
         {
             Button = button;

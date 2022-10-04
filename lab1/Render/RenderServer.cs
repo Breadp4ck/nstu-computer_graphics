@@ -12,6 +12,7 @@ namespace Lab1.Render
         {
             _gl = gl;
             _shaderContext = new ShaderContext(_gl);
+
         }
 
         public void Load(IRenderable renderable)
@@ -34,7 +35,6 @@ namespace Lab1.Render
         {
             if ((viewport.Camera.VisualMask & renderable.VisualMask) > 0)
             {
-                renderable.Vao!.Bind();
                 _gl.PointSize(10.0f);
 
                 renderable.Material.Use(viewport, renderable.Transform);
@@ -46,8 +46,11 @@ namespace Lab1.Render
                     // then indices will be broken (opengl will use indices of the next IRenderable)
                     // idk why it's working this way, but it has to be I think
                     renderable.Ebo!.Update(renderable.Indices);
+                    renderable.Vbo!.Update(renderable.Vertices);
+
 
                     _gl.DrawElements(PrimitiveType.Triangles, (uint)renderable.Indices.Length, DrawElementsType.UnsignedShort, null);
+                    // _gl.DrawArrays(PrimitiveType.Points, 0, (uint)renderable.Vertices.Length);
                 }
 
             }
@@ -64,6 +67,9 @@ namespace Lab1.Render
             _gl!.Enable(EnableCap.Blend);
             _gl!.Enable(EnableCap.LineSmooth);
             _gl!.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+
+            // With Less functions there are glitches
+            // _gl.DepthFunc(DepthFunction.Lequal);
         }
 
         public void ChangeContextSize(Vector2 size)

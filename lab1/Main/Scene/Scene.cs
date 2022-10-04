@@ -45,6 +45,7 @@ namespace Lab1.Main
                 _renderServer.Load((IRenderable)node);
             }
 
+            node.AttachInputServer(_inputServer);
             _nodes.Add(node);
         }
 
@@ -77,8 +78,6 @@ namespace Lab1.Main
 
         protected void Input(InputEvent input)
         {
-            Console.WriteLine("kek");
-
             foreach (var node in _nodes)
             {
                 node.Input(input);
@@ -91,6 +90,39 @@ namespace Lab1.Main
                 _window,
                 new Environment3D("DefaultEnvironment3D"),
                 new Camera3D("DefaultCamera3D")
+            );
+
+            _viewports.Add(viewport);
+        }
+
+        public void AttachViewport(ICamera camera)
+        {
+            var viewport = new Viewport(
+                _window,
+                new Environment3D("DefaultEnvironment3D"),
+                camera
+            );
+
+            _viewports.Add(viewport);
+        }
+
+        public void AttachViewport(IEnvironment environment)
+        {
+            var viewport = new Viewport(
+                _window,
+                environment,
+                new Camera3D("DefaultCamera3D")
+            );
+
+            _viewports.Add(viewport);
+        }
+
+        public void AttachViewport(IEnvironment environment, ICamera camera)
+        {
+            var viewport = new Viewport(
+                _window,
+                environment,
+                camera
             );
 
             _viewports.Add(viewport);
