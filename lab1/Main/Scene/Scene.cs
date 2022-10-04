@@ -1,4 +1,5 @@
 using Lab1.Render;
+using Lab1.Input;
 using Lab1.Window;
 
 using Lab1.Main.Scene3D;
@@ -12,6 +13,7 @@ namespace Lab1.Main
 
         private WindowServer _window;
         private RenderServer _renderServer;
+        private InputServer _inputServer;
 
         public Node Root { get; init; }
 
@@ -22,8 +24,10 @@ namespace Lab1.Main
 
             _window = new WindowServer();
             _renderServer = new RenderServer(_window.GetGlContext());
+            _inputServer = new InputServer(_window.GetInputContext());
 
             _window.OnWindowStartsRender += Process;
+            _inputServer.OnInputEmited += Input;
         }
 
         public void Run()
@@ -68,6 +72,16 @@ namespace Lab1.Main
                         _renderServer.Render(viewport, (IRenderable)node);
                     }
                 }
+            }
+        }
+
+        protected void Input(InputEvent input)
+        {
+            Console.WriteLine("kek");
+
+            foreach (var node in _nodes)
+            {
+                node.Input(input);
             }
         }
 
