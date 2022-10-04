@@ -1,4 +1,5 @@
 using Silk.NET.Input;
+using System.Numerics;
 
 namespace Lab1.Input
 {
@@ -9,6 +10,8 @@ namespace Lab1.Input
         private IInputContext _input;
         private IKeyboard? _keyboard;
         private IMouse? _mouse;
+
+        public Vector2 PreviousMousePosition { get; private set; } = Vector2.Zero;
 
         public Dictionary<string, InputEvent> Actions { get; set; } = new Dictionary<string, InputEvent>();
         public event InputEmited? OnInputEmited;
@@ -24,10 +27,14 @@ namespace Lab1.Input
             _keyboard!.KeyUp += HandleRawKeyUpInput;
             _keyboard!.KeyDown += HandleRawKeyDownInput;
 
+            _mouse!.MouseMove += HandleRawKeyMouseMotion;
+
             Actions["movement_forward"] = new InputEventKey(this, KeyboardButton.W);
             Actions["movement_backward"] = new InputEventKey(this, KeyboardButton.S);
             Actions["movement_left"] = new InputEventKey(this, KeyboardButton.A);
             Actions["movement_right"] = new InputEventKey(this, KeyboardButton.D);
+
+            _mouse.Cursor.CursorMode = CursorMode.Disabled;
         }
 
         private void HandleRawKeyUpInput(IKeyboard keyboard, Key key, int arg3)
@@ -61,6 +68,18 @@ namespace Lab1.Input
                         action.IsInvoked = input.IsInvoked;
                     }
                 }
+            }
+        }
+
+        private void HandleRawKeyMouseMotion(IMouse mouse, Vector2 position)
+        {
+            if (OnInputEmited != null)
+            {
+                var offset = position - PreviousMousePosition;
+                PreviousMousePosition = position;
+
+                var input = new InputMouseMotion(this, offset);
+                OnInputEmited!.Invoke(input);
             }
         }
 

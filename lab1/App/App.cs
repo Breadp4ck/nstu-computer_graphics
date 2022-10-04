@@ -59,6 +59,8 @@ namespace Lab1.App
 
     public class FlyCamera3D : Camera3D
     {
+        private Vector2 cameraRotation = Vector2.Zero;
+
         public float Speed { get; private set; } = 10.0f;
         public FlyCamera3D(string name) : base(name) { }
 
@@ -88,10 +90,45 @@ namespace Lab1.App
                 direction.X -= 1.0f;
             }
 
+            var rotationX = Quaternion.CreateFromAxisAngle(Vector3.UnitY, cameraRotation.X);
+            var rotationY = Quaternion.CreateFromAxisAngle(Vector3.UnitX, cameraRotation.Y);
+
+            Transform.Rotation = Quaternion.Concatenate(rotationX, rotationY);
+
             if (direction != Vector3.Zero)
             {
                 direction = Vector3.Normalize(direction);
+                var angle = cameraRotation.X;
+
+                direction = new Vector3(
+                    (float)(direction.X * System.Math.Cos(-angle) + direction.Z * System.Math.Sin(-angle)),
+                    direction.Y,
+                    (float)(direction.Z * System.Math.Cos(-angle) - direction.X * System.Math.Sin(-angle))
+                );
+
                 Translate(direction * delta * Speed);
+            }
+        }
+
+        public override void Input(InputEvent input)
+        {
+            base.Input(input);
+
+            if (input is InputMouseMotion)
+            {
+                var offset = ((InputMouseMotion)input).Offset;
+
+                cameraRotation.X += offset.X * 0.004f;
+                cameraRotation.Y += offset.Y * 0.004f;
+
+                if (cameraRotation.Y > (System.Math.PI - 0.02) / 2.0)
+                {
+                    cameraRotation.Y = (float)(System.Math.PI - 0.02) / 2.0f;
+                }
+                else if (cameraRotation.Y < -(System.Math.PI - 0.02) / 2.0)
+                {
+                    cameraRotation.Y = -(float)(System.Math.PI - 0.02) / 2.0f;
+                }
             }
         }
     }
