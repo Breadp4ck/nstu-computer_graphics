@@ -33,6 +33,8 @@ namespace Lab1.Input
             Actions["movement_backward"] = new InputEventKey(this, KeyboardButton.S);
             Actions["movement_left"] = new InputEventKey(this, KeyboardButton.A);
             Actions["movement_right"] = new InputEventKey(this, KeyboardButton.D);
+            Actions["movement_upward"] = new InputEventKey(this, KeyboardButton.Space);
+            Actions["movement_down"] = new InputEventKey(this, KeyboardButton.Shift);
 
             _mouse.Cursor.CursorMode = CursorMode.Disabled;
         }

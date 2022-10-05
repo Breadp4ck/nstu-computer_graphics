@@ -9,6 +9,7 @@ namespace Lab1.Input
         S,
         A,
         Space,
+        Shift,
         Unknown,
     }
 
@@ -30,6 +31,8 @@ namespace Lab1.Input
                 Key.A => KeyboardButton.A,
                 Key.D => KeyboardButton.D,
                 Key.Space => KeyboardButton.Space,
+                Key.ShiftLeft => KeyboardButton.Shift,
+                Key.ShiftRight => KeyboardButton.Shift,
                 _ => KeyboardButton.Unknown,
             };
 

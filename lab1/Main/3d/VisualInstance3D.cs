@@ -1,6 +1,8 @@
 using Lab1.Render;
 using Lab1.Resources;
 
+using System.Numerics;
+
 namespace Lab1.Main.Scene3D
 {
     public abstract class VisualInstance3D : Node3D, IRenderable
@@ -18,6 +20,8 @@ namespace Lab1.Main.Scene3D
             get => _materialResource;
             set
             {
+                _materialResource = value;
+
                 if (Material != null)
                 {
                     Material!.LoadResource(value);
@@ -33,6 +37,12 @@ namespace Lab1.Main.Scene3D
 
             Vbo = vbo;
             Ebo = ebo;
+
+
+            if (MaterialResource != null)
+            {
+                Material!.LoadResource(MaterialResource);
+            }
         }
 
         public virtual void Draw(ICamera camera) { }

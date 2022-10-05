@@ -21,6 +21,14 @@ namespace Lab1.Main.Scene3D
 
         public CameraMode Mode { get; set; } = CameraMode.Perspective;
 
+        public override Matrix4x4 View
+        {
+            get =>
+                Matrix4x4.CreateTranslation(-GlobalTransform.Position) *
+                Matrix4x4.CreateFromQuaternion(GlobalTransform.Rotation) *
+                Matrix4x4.CreateScale(GlobalTransform.Scale);
+        }
+
         public Matrix4x4 GetProjection(Vector2 viewportSize)
         {
             switch (Mode)

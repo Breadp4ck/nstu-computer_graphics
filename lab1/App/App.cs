@@ -18,42 +18,82 @@ namespace Lab1.App
 
             // _scene.AttachViewport();
 
-            var myRectangle1 = new MeshInstance3D("Прямоугольник");
-            myRectangle1.MeshData = new RectanglePrimitive();
+            var cube1 = new MeshInstance3D("Куб 1");
+            var cube2 = new MeshInstance3D("Куб 2");
+            var cube3 = new MeshInstance3D("Куб 3");
+            var cube4 = new MeshInstance3D("Куб 4");
 
-            var cude = new MeshInstance3D("Куб");
-            cude.MeshData = new CubePrimitive();
+            cube1.MeshData = new CubePrimitive();
+            cube2.MeshData = new CubePrimitive();
+            cube3.MeshData = new CubePrimitive();
+            cube4.MeshData = new CubePrimitive();
 
-            var myTriangle = new MeshInstance3D("Треугольник");
-            myTriangle.MeshData = new TrianglePrimitive();
+            var cubeMat = new StandartMaterialResource();
+            cubeMat.Color = new Color(0.6f, 0.2f, 0.3f);
 
-            _scene.Root.AddChild(cude);
-            _scene.Root.AddChild(myTriangle);
-            _scene.Root.AddChild(myRectangle1);
+            var kek = new StandartMaterialResource();
+            kek.Color = new Color(0.1f, 0.2f, 0.7f);
 
+            cube1.MaterialResource = cubeMat;
+            cube2.MaterialResource = cubeMat;
+            cube3.MaterialResource = cubeMat;
+            cube4.MaterialResource = kek;
 
-            var matRectangle1 = new StandartMaterialResource();
-            var matRectangle2 = new StandartMaterialResource();
-            var matTriangle = new StandartMaterialResource();
-
-            myRectangle1.Translate(new Vector3(0.0f, 1.0f, -10.5f));
-            cude.Translate(new Vector3(0.0f, 0.0f, -10.5f));
-            myTriangle.Translate(new Vector3(0.0f, -1.0f, -14.0f));
-
-            matRectangle1.Color = new Color(0.2f, 0.7f, 0.3f);
-            matRectangle2.Color = new Color(0.2f, 0.3f, 0.8f);
-            matTriangle.Color = new Color(0.6f, 0.2f, 0.3f);
-
-            myRectangle1.MaterialResource = matRectangle1;
-            cude.MaterialResource = matRectangle2;
-            myTriangle.MaterialResource = matTriangle;
+            cube1.Translate(0.0f, 0.0f, -3.0f);
+            cube2.Translate(0.0f, 0.0f, -3.0f);
+            cube3.Translate(0.0f, 3.0f, -3.0f);
+            cube4.Translate(0.0f, 0.0f, -10.0f);
 
             var camera = new FlyCamera3D("MainCamera");
             _scene.Root.AddChild(camera);
 
-            _scene.AttachViewport(camera);
+            _scene.Root.AddChild(cube1);
+            cube1.AddChild(cube2);
+            cube2.AddChild(cube3);
+            //camera.AddChild(cube4);
+
+            var lol1 = new Kek("LoL 1");
+            var lol2 = new Kek("LoL 2");
+            var lol3 = new Kek("LoL 3");
+
+            lol1.Translate(0.0f, 0.0f, 8.0f);
+            lol2.Translate(0.0f, 0.0f, 3.0f);
+            lol3.Translate(0.0f, 0.0f, 3.0f);
+
+            _scene.Root.AddChild(lol1);
+            lol1.AddChild(lol2);
+            lol2.AddChild(lol3);
+
+            var env = new Environment3D("Environment");
+            env.SkyColor = new Color(0.02f, 0.05f, 0.1f);
+
+            _scene.AttachViewport(env, camera);
 
             _scene.Run();
+        }
+    }
+
+    public class Kek : MeshInstance3D
+    {
+        private float _angle = 0.0f;
+
+        public Kek(string name) : base(name)
+        {
+            MeshData = new CubePrimitive();
+
+            var kek = new StandartMaterialResource();
+            kek.Color = new Color(0.1f, 0.2f, 0.7f);
+
+            MaterialResource = kek;
+        }
+
+        public override void Process(float delta)
+        {
+            base.Process(delta);
+
+            Transform.Rotation = Quaternion.CreateFromAxisAngle(Vector3.UnitX, _angle);
+
+            _angle += delta;
         }
     }
 
@@ -72,22 +112,32 @@ namespace Lab1.App
 
             if (InputServer!.IsActionPressed("movement_forward"))
             {
-                direction.Z += 1.0f;
+                direction.Z -= 1.0f;
             }
 
             if (InputServer!.IsActionPressed("movement_backward"))
             {
-                direction.Z -= 1.0f;
+                direction.Z += 1.0f;
             }
 
             if (InputServer!.IsActionPressed("movement_left"))
             {
-                direction.X += 1.0f;
+                direction.X -= 1.0f;
             }
 
             if (InputServer!.IsActionPressed("movement_right"))
             {
-                direction.X -= 1.0f;
+                direction.X += 1.0f;
+            }
+
+            if (InputServer!.IsActionPressed("movement_upward"))
+            {
+                direction.Y += 1.0f;
+            }
+
+            if (InputServer!.IsActionPressed("movement_down"))
+            {
+                direction.Y -= 1.0f;
             }
 
             var rotationX = Quaternion.CreateFromAxisAngle(Vector3.UnitY, cameraRotation.X);
@@ -128,6 +178,13 @@ namespace Lab1.App
                 else if (cameraRotation.Y < -(System.Math.PI - 0.02) / 2.0)
                 {
                     cameraRotation.Y = -(float)(System.Math.PI - 0.02) / 2.0f;
+                }
+
+                Console.WriteLine(GlobalTransform.Rotation);
+
+                foreach (Node3D child in Childs)
+                {
+                    Console.WriteLine(child.GlobalTransform.Rotation);
                 }
             }
         }

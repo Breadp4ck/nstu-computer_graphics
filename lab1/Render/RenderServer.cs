@@ -21,12 +21,12 @@ namespace Lab1.Render
             BufferObject<ushort> ebo = new BufferObject<ushort>(_gl, renderable.Indices, BufferTargetARB.ElementArrayBuffer, BufferUsageARB.DynamicCopy);
 
             VertexArrayObject<float, ushort> vao = new VertexArrayObject<float, ushort>(_gl, vbo, ebo);
-            vao.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, 3, 0);
+            // vao.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, 3, 0);
 
             // Next chapter in engine development
-            // vao.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, 8, 0);
-            // vao.VertexAttributePointer(1, 3, VertexAttribPointerType.Float, 8, 3);
-            // vao.VertexAttributePointer(2, 2, VertexAttribPointerType.Float, 8, 6);
+            vao.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, 8, 0);
+            vao.VertexAttributePointer(1, 3, VertexAttribPointerType.Float, 8, 3);
+            vao.VertexAttributePointer(2, 2, VertexAttribPointerType.Float, 8, 6);
 
             renderable.Initialize(_shaderContext, vao, vbo, ebo);
         }
@@ -37,7 +37,7 @@ namespace Lab1.Render
             {
                 _gl.PointSize(10.0f);
 
-                renderable.Material.Use(viewport, renderable.Transform);
+                renderable.Material.Use(viewport, renderable.View);
                 // renderable.Draw(viewport.Camera);
 
                 unsafe
@@ -47,7 +47,6 @@ namespace Lab1.Render
                     // idk why it's working this way, but it has to be I think
                     renderable.Ebo!.Update(renderable.Indices);
                     renderable.Vbo!.Update(renderable.Vertices);
-
 
                     _gl.DrawElements(PrimitiveType.Triangles, (uint)renderable.Indices.Length, DrawElementsType.UnsignedShort, null);
                     // _gl.DrawArrays(PrimitiveType.Points, 0, (uint)renderable.Vertices.Length);

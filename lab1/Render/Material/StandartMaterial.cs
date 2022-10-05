@@ -19,7 +19,7 @@ namespace Lab1.Render
             _shaderDescriptor = _shaderProgram.GetDescriptor();
         }
 
-        internal override void Use(Viewport viewport, ReMath.Transform instanceTransform)
+        internal override void Use(Viewport viewport, Matrix4x4 view)
         {
             _context.Use(_shaderDescriptor);
 
@@ -32,8 +32,8 @@ namespace Lab1.Render
                 Resource.Color.Alpha
             );
 
-            _context.SetUniform(_shaderDescriptor, "model", instanceTransform.ViewMatrix);
-            _context.SetUniform(_shaderDescriptor, "view", viewport.Camera.Transform.ViewMatrix);
+            _context.SetUniform(_shaderDescriptor, "model", view);
+            _context.SetUniform(_shaderDescriptor, "view", viewport.Camera.View);
             _context.SetUniform(_shaderDescriptor, "projection", viewport.GetProjection());
         }
 

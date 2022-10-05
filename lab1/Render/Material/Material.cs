@@ -1,5 +1,6 @@
 using Lab1.Math;
 using Lab1.Resources;
+using System.Numerics;
 
 namespace Lab1.Render
 {
@@ -12,7 +13,7 @@ namespace Lab1.Render
             _context = context;
         }
 
-        internal virtual void Use(Viewport viewport, Transform instanceTransform) { }
+        internal virtual void Use(Viewport viewport, Matrix4x4 view) { }
 
         public virtual void LoadResource(MaterialResource resource) { }
     }

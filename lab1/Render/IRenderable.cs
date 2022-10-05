@@ -1,4 +1,5 @@
 using Lab1.Math;
+using System.Numerics;
 
 namespace Lab1.Render
 {
@@ -6,7 +7,7 @@ namespace Lab1.Render
     {
         public short VisualMask { get; set; }
         public Material Material { get; }
-        public Transform Transform { get; }
+        public Matrix4x4 View { get; }
         public BufferObject<float>? Vbo { get; }
         public BufferObject<ushort>? Ebo { get; }
         public float[] Vertices { get; }

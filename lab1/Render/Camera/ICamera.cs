@@ -9,7 +9,7 @@ namespace Lab1.Render
         public float MinDistance { get; set; }
         public float MaxDistance { get; set; }
         public float Fov { get; set; }
-        public ReMath.Transform Transform { get; set; }
+        public Matrix4x4 View { get; }
         public CameraMode Mode { get; set; }
         public Matrix4x4 GetProjection(Vector2 viewportSize);
     }

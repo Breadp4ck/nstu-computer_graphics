@@ -27,7 +27,7 @@ namespace Lab1.Main
             RootNode = true;
         }
 
-        public void AddChild(Node child)
+        public virtual void AddChild(Node child)
         {
             Childs.Add(child);
             child.Parent = this;
