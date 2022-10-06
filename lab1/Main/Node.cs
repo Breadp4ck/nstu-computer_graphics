@@ -31,6 +31,7 @@ namespace Lab1.Main
         {
             if (Scene!.IsInTree(child))
             {
+                // TODO: or maybe better throw exception?
                 Console.WriteLine($"ERROR: The node {child.Name} is already in the Scene. It will not be added.");
                 return;
             }

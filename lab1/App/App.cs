@@ -16,41 +16,8 @@ namespace Lab1.App
         {
             _scene = new Scene();
 
-            // _scene.AttachViewport();
-
-            var cube1 = new MeshInstance3D("Куб 1");
-            var cube2 = new MeshInstance3D("Куб 2");
-            var cube3 = new MeshInstance3D("Куб 3");
-            var cube4 = new MeshInstance3D("Куб 4");
-
-            cube1.MeshData = new CubePrimitive();
-            cube2.MeshData = new CubePrimitive();
-            cube3.MeshData = new CubePrimitive();
-            cube4.MeshData = new CubePrimitive();
-
-            var cubeMat = new StandartMaterialResource();
-            cubeMat.Color = new Color(0.6f, 0.2f, 0.3f);
-
-            var kek = new StandartMaterialResource();
-            kek.Color = new Color(0.1f, 0.2f, 0.7f);
-
-            cube1.MaterialResource = cubeMat;
-            cube2.MaterialResource = cubeMat;
-            cube3.MaterialResource = cubeMat;
-            cube4.MaterialResource = kek;
-
-            cube1.Translate(0.0f, 0.0f, -3.0f);
-            cube2.Translate(0.0f, 0.0f, -3.0f);
-            cube3.Translate(0.0f, 3.0f, -3.0f);
-            cube4.Translate(0.0f, 0.0f, -10.0f);
-
             var camera = new FlyCamera3D("MainCamera");
             _scene.Root.AddChild(camera);
-
-            _scene.Root.AddChild(cube1);
-            cube1.AddChild(cube2);
-            cube2.AddChild(cube3);
-            //camera.AddChild(cube4);
 
             var lol1 = new Kek("LoL 1");
             var lol2 = new Kek("LoL 2");
@@ -63,7 +30,6 @@ namespace Lab1.App
             _scene.Root.AddChild(lol1);
             lol1.AddChild(lol2);
             lol2.AddChild(lol3);
-            lol2.AddChild(lol2); // Scene.IsInTree()
 
             var env = new Environment3D("Environment");
             env.SkyColor = new Color(0.02f, 0.05f, 0.1f);
@@ -83,7 +49,7 @@ namespace Lab1.App
             MeshData = new CubePrimitive();
 
             var kek = new StandartMaterialResource();
-            kek.Color = new Color(0.1f, 0.2f, 0.7f);
+            kek.Diffuse = new Color(0.1f, 0.2f, 0.7f);
 
             MaterialResource = kek;
         }
@@ -92,7 +58,7 @@ namespace Lab1.App
         {
             base.Process(delta);
 
-            Transform.Rotation = Quaternion.CreateFromAxisAngle(Vector3.UnitX, _angle);
+            Transform.Rotation = Quaternion.CreateFromAxisAngle(Vector3.UnitY, _angle);
 
             _angle += delta;
         }
@@ -100,7 +66,10 @@ namespace Lab1.App
 
     public class FlyCamera3D : Camera3D
     {
-        private Vector2 cameraRotation = Vector2.Zero;
+        private Vector2 cameraRotation = new Vector2((float)(-System.Math.PI / 2.0f), 0.0f);
+
+        // private float pitch = 0.0f;
+        // private float yaw = 0.0f;
 
         public float Speed { get; private set; } = 10.0f;
         public FlyCamera3D(string name) : base(name) { }
@@ -113,22 +82,22 @@ namespace Lab1.App
 
             if (InputServer!.IsActionPressed("movement_forward"))
             {
-                direction.Z -= 1.0f;
+                direction += _cameraFront;
             }
 
             if (InputServer!.IsActionPressed("movement_backward"))
             {
-                direction.Z += 1.0f;
+                direction -= _cameraFront;
             }
 
             if (InputServer!.IsActionPressed("movement_left"))
             {
-                direction.X -= 1.0f;
+                direction -= Vector3.Cross(_cameraFront, _cameraUp);
             }
 
             if (InputServer!.IsActionPressed("movement_right"))
             {
-                direction.X += 1.0f;
+                direction += Vector3.Cross(_cameraFront, _cameraUp);
             }
 
             if (InputServer!.IsActionPressed("movement_upward"))
@@ -141,21 +110,27 @@ namespace Lab1.App
                 direction.Y -= 1.0f;
             }
 
-            var rotationX = Quaternion.CreateFromAxisAngle(Vector3.UnitY, cameraRotation.X);
-            var rotationY = Quaternion.CreateFromAxisAngle(Vector3.UnitX, cameraRotation.Y);
+            _cameraFront = new Vector3(
+                (float)(System.Math.Cos(cameraRotation.X) * System.Math.Cos(cameraRotation.Y)),
+                (float)System.Math.Sin(cameraRotation.Y),
+                (float)(System.Math.Sin(cameraRotation.X) * System.Math.Cos(cameraRotation.Y))
+            );
 
-            Transform.Rotation = Quaternion.Concatenate(rotationX, rotationY);
+            // var rotationX = Quaternion.CreateFromAxisAngle(Vector3.UnitY, cameraRotation.X);
+            // var rotationY = Quaternion.CreateFromAxisAngle(Vector3.UnitX, cameraRotation.Y);
+
+            // Transform.Rotation = Quaternion.Concatenate(rotationX, rotationY);
 
             if (direction != Vector3.Zero)
             {
                 direction = Vector3.Normalize(direction);
-                var angle = cameraRotation.X;
+                // var angle = cameraRotation.X;
 
-                direction = new Vector3(
-                    (float)(direction.X * System.Math.Cos(-angle) + direction.Z * System.Math.Sin(-angle)),
-                    direction.Y,
-                    (float)(direction.Z * System.Math.Cos(-angle) - direction.X * System.Math.Sin(-angle))
-                );
+                // direction = new Vector3(
+                //     (float)(direction.X * System.Math.Cos(-angle) + direction.Z * System.Math.Sin(-angle)),
+                //     direction.Y,
+                //     (float)(direction.Z * System.Math.Cos(-angle) - direction.X * System.Math.Sin(-angle))
+                // );
 
                 Translate(direction * delta * Speed);
 
@@ -182,7 +157,7 @@ namespace Lab1.App
                 var offset = ((InputMouseMotion)input).Offset;
 
                 cameraRotation.X += offset.X * 0.004f;
-                cameraRotation.Y += offset.Y * 0.004f;
+                cameraRotation.Y -= offset.Y * 0.004f;
 
                 if (cameraRotation.Y > (System.Math.PI - 0.02) / 2.0)
                 {

@@ -7,6 +7,9 @@ namespace Lab1.Render
     {
         private GL _gl;
         private ShaderContext _shaderContext;
+        private IEnvironment _currentEnvironment;
+        private IDirectionalLight _currentDirectionalLight;
+        private IPointLight[] _currentPointLights;
 
         public RenderServer(GL gl)
         {
@@ -35,10 +38,12 @@ namespace Lab1.Render
         {
             if ((viewport.Camera.VisualMask & renderable.VisualMask) > 0)
             {
-                _gl.PointSize(10.0f);
-
                 renderable.Material.Use(viewport, renderable.View);
-                // renderable.Draw(viewport.Camera);
+
+                renderable.Material.Attach(_currentEnvironment);
+                renderable.Material.Attach(_currentDirectionalLight);
+                renderable.Material.Attach(_currentPointLights);
+                renderable.Material.Attach(viewport.Camera);
 
                 unsafe
                 {
@@ -49,13 +54,12 @@ namespace Lab1.Render
                     renderable.Vbo!.Update(renderable.Vertices);
 
                     _gl.DrawElements(PrimitiveType.Triangles, (uint)renderable.Indices.Length, DrawElementsType.UnsignedShort, null);
-                    // _gl.DrawArrays(PrimitiveType.Points, 0, (uint)renderable.Vertices.Length);
                 }
 
             }
         }
 
-        public void Render(Viewport viewport, IEnvironment environment)
+        public void ApplyEnvironment(Viewport viewport, IEnvironment environment)
         {
             var skyColor = environment.SkyColor;
 
@@ -67,8 +71,17 @@ namespace Lab1.Render
             _gl!.Enable(EnableCap.LineSmooth);
             _gl!.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
-            // With Less functions there are glitches
-            // _gl.DepthFunc(DepthFunction.Lequal);
+            _currentEnvironment = environment;
+        }
+
+        public void ApplyDirectionalLight(Viewport viewport, IDirectionalLight directionalLight)
+        {
+            _currentDirectionalLight = directionalLight;
+        }
+
+        public void ApplyPointLights(Viewport viewport, IPointLight[] pointLights)
+        {
+            _currentPointLights = pointLights;
         }
 
         public void ChangeContextSize(Vector2 size)

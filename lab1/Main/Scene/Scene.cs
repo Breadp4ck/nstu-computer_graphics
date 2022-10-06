@@ -15,6 +15,9 @@ namespace Lab1.Main
         private RenderServer _renderServer;
         private InputServer _inputServer;
 
+        private DirectionalLight3D _directionalLight = new DirectionalLight3D("Солнце");
+        private List<IPointLight> _pointLights = new List<IPointLight>();
+
         public Node Root { get; init; }
 
         public Scene() : base()
@@ -27,6 +30,8 @@ namespace Lab1.Main
 
             _window.OnWindowStartsRender += Process;
             _inputServer.OnInputEmited += Input;
+
+            _pointLights.Add(new PointLight3D("Точечный свет"));
         }
 
         public void Run()
@@ -74,7 +79,9 @@ namespace Lab1.Main
             for (int viewportID = 0; viewportID < _viewports.Count; viewportID++)
             {
                 var viewport = _viewports[viewportID];
-                _renderServer.Render(viewport, viewport.Environment);
+                _renderServer.ApplyEnvironment(viewport, viewport.Environment);
+                _renderServer.ApplyDirectionalLight(viewport, _directionalLight);
+                _renderServer.ApplyPointLights(viewport, _pointLights.ToArray());
             }
 
             for (int nodeID = 0; nodeID < _nodes.Count; nodeID++)

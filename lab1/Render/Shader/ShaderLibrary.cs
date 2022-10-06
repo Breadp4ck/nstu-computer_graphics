@@ -13,78 +13,124 @@ namespace Lab1.Render
                 uniform mat4 view;
                 uniform mat4 projection;
 
-                // out vec3 Normal;
-                // out vec3 FragPos;
-                // out vec2 TexCoords;
+                out vec3 Normal;
+                out vec3 FragPos;
+                out vec2 TexCoords;
 
                 void main() {
                     gl_Position = projection * view * model * vec4(aPos, 1.0);
 
-                    // FragPos = vec3(model * view * vec4(aPos, 1.0));
-                    // Normal = mat3(transpose(inverse(model * view))) * aNormal;
-                    // TexCoords = aTexCoords;
+                    FragPos = vec3(model * vec4(aPos, 1.0));
+                    Normal = mat3(transpose(inverse(model))) * aNormal;
+                    TexCoords = aTexCoords;
                 }
             ";
 
             string fragColorSource = @"#version 330 core
                 out vec4 FragColor;
 
-                // struct Material {
-                //     sampler2D diffuse;
-                //     vec3 specular;
-                //     float shininess;
-                // };
+                struct Material {
+                    vec3 diffuse;
+                    vec3 specular;
+                    float shininess;
+                };
 
-                // struct DirLight {
-                //     vec3 direction;
+                struct Env {
+                    vec3 ambient;
+                };
 
-                //     vec3 ambient;
-                //     vec3 diffuse;
-                //     vec3 specular;
-                // };
+                struct DirLight {
+                    vec3 direction;
+                    float strength;
 
-                // uniform Material material;
-                // uniform DirLight dirLight;
+                    vec3 diffuse;
+                    vec3 specular;
+                };
 
-                // in vec3 Normal;
-                // in vec3 FragPos;
-                // in vec2 TexCoords;
+                struct PointLight {
+                    vec3 position;
 
-                // vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir);
+                    vec3 diffuse;
+                    vec3 specular;
 
-                uniform vec4 color;
+                    float constant;
+                    float linear;
+                    float quadratic;
+                };
+
+                struct Camera {
+                    vec3 position;
+                };
+
+                #define CNT_POINT_LIGHTS 16
+
+                uniform Env env;
+                uniform Material material;
+                uniform DirLight dirLight;
+                uniform PointLight pointLights[CNT_POINT_LIGHTS];
+                uniform Camera camera;
+
+                in vec3 Normal;
+                in vec3 FragPos;
+                in vec2 TexCoords;
+
+                vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir);
+                vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
                 void main() {
-                    FragColor = vec4(color);
+                    // properties
+                    vec3 normal = normalize(Normal);
+                    vec3 viewDir = normalize(camera.position - FragPos);
 
-                    // // properties
-                    // vec3 norm = normalize(Normal);
-                    // vec3 viewDir = normalize(-FragPos);
-                    // vec3 result = vec3(0.0);
+                    // ambient color
+                    vec3 result = env.ambient * material.diffuse;
 
-                    // // directional lighting
-                    // result = CalcDirLight(dirLight, norm, viewDir);
+                    // Directional Light
+                    result += CalcDirLight(dirLight, normal, viewDir);
 
-                    // FragColor = vec4(result, 1.0);
+                    for (int lightID = 0; lightID < CNT_POINT_LIGHTS; lightID++) {
+                        result += CalcPointLight(pointLights[lightID], normal, FragPos, viewDir);
+                    }
+                    
+                    FragColor = vec4(result, 1.0);
                 }
 
-                // vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir) {
-                //     vec3 lightDir = normalize(-light.direction);
+                vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir) {
+                    vec3 lightDir = normalize(-light.direction);
 
-                //     // diffuse shading
-                //     float diff = max(dot(normal, lightDir), 0.0);
+                    // diffuse shading
+                    float diff = max(dot(normal, lightDir), 0.0);
 
-                //     // specular shading
-                //     vec3 reflectDir = reflect(-lightDir, normal);
-                //     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+                    // specular shading
+                    vec3 reflectDir = reflect(-lightDir, normal);
+                    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
-                //     // combine results
-                //     vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
-                //     vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords));
-                //     vec3 specular = light.specular * spec * material.specular;
+                    vec3 diffuse = light.diffuse * diff * material.diffuse;
+                    vec3 specular = light.specular * spec * material.specular;
 
-                //     return (ambient + diffuse + specular);
-                // }
+                    return light.strength * (diffuse + specular);
+                }
+
+                vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
+                    vec3 lightDir = normalize(light.position - fragPos);
+
+                    // diffuse shading
+                    float diff = max(dot(normal, lightDir), 0.0);
+
+                    // specular shading
+                    vec3 reflectDir = reflect(-lightDir, normal);
+                    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+
+                    // attenuation
+                    float distance = length(light.position - fragPos);
+                    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+                    
+                    // combine results
+                    vec3 diffuse = light.diffuse * diff * material.diffuse;
+                    vec3 specular = light.specular * spec * material.specular;
+
+                    return attenuation * (diffuse + specular);
+                }
             ";
 
             Shader vert = new Shader(context, ShaderType.VertexShader, vertColorSource);
