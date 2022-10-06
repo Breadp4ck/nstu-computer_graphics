@@ -29,6 +29,12 @@ namespace Lab1.Main
 
         public virtual void AddChild(Node child)
         {
+            if (Scene!.IsInTree(child))
+            {
+                Console.WriteLine($"ERROR: The node {child.Name} is already in the Scene. It will not be added.");
+                return;
+            }
+
             Childs.Add(child);
             child.Parent = this;
 

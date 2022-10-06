@@ -17,7 +17,6 @@ namespace Lab1.Main
 
         public Node Root { get; init; }
 
-
         public Scene() : base()
         {
             Root = new Node(this, "Root");
@@ -49,6 +48,19 @@ namespace Lab1.Main
             _nodes.Add(node);
         }
 
+        public bool IsInTree(Node node)
+        {
+            foreach (var sceneNode in _nodes)
+            {
+                if (node == sceneNode)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         protected override void Process(float delta)
         {
             base.Process(delta);
@@ -57,19 +69,25 @@ namespace Lab1.Main
             // I mean, _gl.Viewport(size);
             _renderServer.ChangeContextSize(_window.WindowSize);
 
-            foreach (var viewport in _viewports)
+            // I can add nodes and viewports dynamicly, so foreach is not working here
+
+            for (int viewportID = 0; viewportID < _viewports.Count; viewportID++)
             {
+                var viewport = _viewports[viewportID];
                 _renderServer.Render(viewport, viewport.Environment);
             }
 
-            foreach (var node in _nodes)
+            for (int nodeID = 0; nodeID < _nodes.Count; nodeID++)
             {
+                var node = _nodes[nodeID];
+
                 node.Process(delta);
 
                 if (node is IRenderable)
                 {
-                    foreach (var viewport in _viewports)
+                    for (int viewportID = 0; viewportID < _viewports.Count; viewportID++)
                     {
+                        var viewport = _viewports[viewportID];
                         _renderServer.Render(viewport, (IRenderable)node);
                     }
                 }

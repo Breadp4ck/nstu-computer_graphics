@@ -57,12 +57,13 @@ namespace Lab1.App
             var lol3 = new Kek("LoL 3");
 
             lol1.Translate(0.0f, 0.0f, 8.0f);
-            lol2.Translate(0.0f, 0.0f, 3.0f);
+            lol2.Translate(0.0f, 0.0f, 6.0f);
             lol3.Translate(0.0f, 0.0f, 3.0f);
 
             _scene.Root.AddChild(lol1);
             lol1.AddChild(lol2);
             lol2.AddChild(lol3);
+            lol2.AddChild(lol2); // Scene.IsInTree()
 
             var env = new Environment3D("Environment");
             env.SkyColor = new Color(0.02f, 0.05f, 0.1f);
@@ -157,6 +158,18 @@ namespace Lab1.App
                 );
 
                 Translate(direction * delta * Speed);
+
+                // var lol = new MeshInstance3D("Куб");
+                // lol.MeshData = new CubePrimitive();
+
+                // var kek = new StandartMaterialResource();
+                // kek.Color = new Color(0.1f, 0.2f, 0.7f);
+                // lol.MaterialResource = kek;
+
+                // Parent!.AddChild(lol);
+
+                // lol.Transform = GlobalTransform;
+                // lol.Transform.Position = GlobalTransform.Position - Vector3.UnitY * 3.0f;
             }
         }
 
@@ -178,13 +191,6 @@ namespace Lab1.App
                 else if (cameraRotation.Y < -(System.Math.PI - 0.02) / 2.0)
                 {
                     cameraRotation.Y = -(float)(System.Math.PI - 0.02) / 2.0f;
-                }
-
-                Console.WriteLine(GlobalTransform.Rotation);
-
-                foreach (Node3D child in Childs)
-                {
-                    Console.WriteLine(child.GlobalTransform.Rotation);
                 }
             }
         }
