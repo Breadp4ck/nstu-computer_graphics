@@ -58,16 +58,33 @@ namespace Lab1.Render
                     float quadratic;
                 };
 
+                struct SpotLight {
+                    vec3 position;
+                    vec3 direction;
+                    float cutOff;
+                    float outerCutOff;
+
+                    vec3 diffuse;
+                    vec3 specular;
+
+                    float constant;
+                    float linear;
+                    float quadratic;
+                };
+
                 struct Camera {
                     vec3 position;
                 };
 
+                #define CNT_DIR_LIGHTS 2
                 #define CNT_POINT_LIGHTS 16
+                #define CNT_SPOT_LIGHTS 4
 
                 uniform Env env;
                 uniform Material material;
-                uniform DirLight dirLight;
+                uniform DirLight dirLights[CNT_DIR_LIGHTS];
                 uniform PointLight pointLights[CNT_POINT_LIGHTS];
+                uniform SpotLight spotLights[CNT_SPOT_LIGHTS];
                 uniform Camera camera;
 
                 in vec3 Normal;
@@ -76,6 +93,7 @@ namespace Lab1.Render
 
                 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir);
                 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
+                vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
                 void main() {
                     // properties
@@ -85,11 +103,19 @@ namespace Lab1.Render
                     // ambient color
                     vec3 result = env.ambient * material.diffuse;
 
-                    // Directional Light
-                    result += CalcDirLight(dirLight, normal, viewDir);
+                    // Directional Lights
+                    for (int lightIdx = 0; lightIdx < CNT_DIR_LIGHTS; lightIdx++) {
+                        result += CalcDirLight(dirLights[lightIdx], normal, viewDir);
+                    }
 
-                    for (int lightID = 0; lightID < CNT_POINT_LIGHTS; lightID++) {
-                        result += CalcPointLight(pointLights[lightID], normal, FragPos, viewDir);
+                    // Point Lights
+                    for (int lightIdx = 0; lightIdx < CNT_POINT_LIGHTS; lightIdx++) {
+                        result += CalcPointLight(pointLights[lightIdx], normal, FragPos, viewDir);
+                    }
+
+                    // Spot Lights
+                    for (int lightIdx = 0; lightIdx < CNT_SPOT_LIGHTS; lightIdx++) {
+                        result += CalcSpotLight(spotLights[lightIdx], normal, FragPos, viewDir);
                     }
                     
                     FragColor = vec4(result, 1.0);
@@ -130,6 +156,39 @@ namespace Lab1.Render
                     vec3 specular = light.specular * spec * material.specular;
 
                     return attenuation * (diffuse + specular);
+                }
+
+                vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
+                    vec3 lightDir = normalize(light.position - FragPos);
+
+                    float theta = dot(lightDir, normalize(-light.direction));
+
+                    // Return just ambient, if fragment is not in the angle
+                    if (theta <= light.outerCutOff) {
+                        return vec3(0.0);
+                    }
+
+                    float epsilon = light.cutOff - light.outerCutOff;
+                    float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);  
+
+                    float distance = length(light.position - FragPos);
+                    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+                    
+                    // data for diffuse 
+                    float diff = max(dot(normal, lightDir), 0.0);
+                    
+                    // data for specular
+                    vec3 reflectDir = reflect(-lightDir, normal);
+                    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+
+                    // combine results
+                    vec3 diffuse = light.diffuse * diff * material.diffuse;
+                    vec3 specular = light.specular * spec * material.specular;
+
+                    diffuse *= attenuation * intensity;
+                    specular *= attenuation * intensity;
+                        
+                    return diffuse + specular;
                 }
             ";
 

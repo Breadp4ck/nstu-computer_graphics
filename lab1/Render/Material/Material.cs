@@ -18,8 +18,9 @@ namespace Lab1.Render
         public virtual void LoadResource(MaterialResource resource) { }
 
         public virtual void Attach(IEnvironment environment) { }
-        public virtual void Attach(IDirectionalLight directionalLight) { }
+        public virtual void Attach(IDirectionalLight[] directionalLights) { }
         public virtual void Attach(IPointLight[] pointLights) { }
+        public virtual void Attach(ISpotLight[] spotLights) { }
         public virtual void Attach(ICamera camera) { }
     }
 }

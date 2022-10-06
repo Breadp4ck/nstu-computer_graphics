@@ -23,13 +23,18 @@ namespace Lab1.App
             var lol2 = new Kek("LoL 2");
             var lol3 = new Kek("LoL 3");
 
-            lol1.Translate(0.0f, 0.0f, 8.0f);
+            var light = new SpotLight3D("Свет");
+
+            lol1.Translate(0.0f, 0.0f, 10.0f);
             lol2.Translate(0.0f, 0.0f, 6.0f);
             lol3.Translate(0.0f, 0.0f, 3.0f);
 
             _scene.Root.AddChild(lol1);
             lol1.AddChild(lol2);
             lol2.AddChild(lol3);
+
+            _scene.Root.AddChild(light);
+            Console.WriteLine(light.Direction);
 
             var env = new Environment3D("Environment");
             env.SkyColor = new Color(0.02f, 0.05f, 0.1f);

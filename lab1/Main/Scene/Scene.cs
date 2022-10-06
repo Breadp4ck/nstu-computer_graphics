@@ -15,8 +15,10 @@ namespace Lab1.Main
         private RenderServer _renderServer;
         private InputServer _inputServer;
 
-        private DirectionalLight3D _directionalLight = new DirectionalLight3D("Солнце");
+        private List<IDirectionalLight> _directionalLights = new List<IDirectionalLight>();
         private List<IPointLight> _pointLights = new List<IPointLight>();
+        private List<ISpotLight> _spotLights = new List<ISpotLight>();
+
 
         public Node Root { get; init; }
 
@@ -30,8 +32,6 @@ namespace Lab1.Main
 
             _window.OnWindowStartsRender += Process;
             _inputServer.OnInputEmited += Input;
-
-            _pointLights.Add(new PointLight3D("Точечный свет"));
         }
 
         public void Run()
@@ -47,6 +47,21 @@ namespace Lab1.Main
             if (node is IRenderable)
             {
                 _renderServer.Load((IRenderable)node);
+            }
+
+            if (_pointLights.Count < RenderServer.MaxDirectionalLightCount && node is IDirectionalLight)
+            {
+                _directionalLights.Add((IDirectionalLight)node);
+            }
+
+            if (_pointLights.Count < RenderServer.MaxPointLightCount && node is IPointLight)
+            {
+                _pointLights.Add((IPointLight)node);
+            }
+
+            if (_spotLights.Count < RenderServer.MaxSpotLightCount && node is ISpotLight)
+            {
+                _spotLights.Add((ISpotLight)node);
             }
 
             node.AttachInputServer(_inputServer);
@@ -80,8 +95,9 @@ namespace Lab1.Main
             {
                 var viewport = _viewports[viewportID];
                 _renderServer.ApplyEnvironment(viewport, viewport.Environment);
-                _renderServer.ApplyDirectionalLight(viewport, _directionalLight);
+                _renderServer.ApplyDirectionalLight(viewport, _directionalLights.ToArray());
                 _renderServer.ApplyPointLights(viewport, _pointLights.ToArray());
+                _renderServer.ApplySpotLights(viewport, _spotLights.ToArray());
             }
 
             for (int nodeID = 0; nodeID < _nodes.Count; nodeID++)

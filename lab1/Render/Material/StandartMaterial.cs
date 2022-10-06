@@ -68,57 +68,93 @@ namespace Lab1.Render
             );
         }
 
-        public override void Attach(IDirectionalLight directionalLight)
+        // TODO: Maybe light generator is needed
+
+        public override void Attach(IDirectionalLight[] directionalLights)
         {
-            base.Attach(directionalLight);
+            base.Attach(directionalLights);
 
-            _context.SetUniform(
-                _shaderDescriptor,
-                "dirLight.direction",
-                directionalLight.Direction.X,
-                directionalLight.Direction.Y,
-                directionalLight.Direction.Z
-            );
+            int lightID = 0;
 
-            _context.SetUniform(
-                _shaderDescriptor,
-                "dirLight.strength",
-                directionalLight.Strength
-            );
+            for (; lightID < directionalLights.Length && lightID < RenderServer.MaxDirectionalLightCount; lightID++)
+            {
+                AddDirectionalLight(directionalLights[lightID], lightID);
+            }
 
-            _context.SetUniform(
-                _shaderDescriptor,
-                "dirLight.diffuse",
-                directionalLight.Diffuse.Red,
-                directionalLight.Diffuse.Green,
-                directionalLight.Diffuse.Blue
-            );
-
-            _context.SetUniform(
-                _shaderDescriptor,
-                "dirLight.specular",
-                directionalLight.Specular.Red,
-                directionalLight.Specular.Green,
-                directionalLight.Specular.Blue
-            );
+            for (; lightID < RenderServer.MaxDirectionalLightCount; lightID++)
+            {
+                AddDirectionalLight(new DirectionalLightEmpty(), lightID);
+            }
         }
 
         public override void Attach(IPointLight[] pointLights)
         {
+            base.Attach(pointLights);
+
             int lightID = 0;
 
-            for (; lightID < pointLights.Length && lightID < 16; lightID++)
+            for (; lightID < pointLights.Length && lightID < RenderServer.MaxPointLightCount; lightID++)
             {
-                addLight(pointLights[lightID], lightID);
+                AddPointLight(pointLights[lightID], lightID);
             }
 
-            for (; lightID < 16; lightID++)
+            for (; lightID < RenderServer.MaxPointLightCount; lightID++)
             {
-                addLight(new PointLightEmpty(), lightID);
+                AddPointLight(new PointLightEmpty(), lightID);
             }
         }
 
-        private void addLight(IPointLight light, int idx)
+        public override void Attach(ISpotLight[] spotLights)
+        {
+            base.Attach(spotLights);
+
+            int lightID = 0;
+
+            for (; lightID < spotLights.Length && lightID < RenderServer.MaxSpotLightCount; lightID++)
+            {
+                AddSpotLight(spotLights[lightID], lightID);
+            }
+
+            for (; lightID < RenderServer.MaxSpotLightCount; lightID++)
+            {
+                AddSpotLight(new SpotLightEmpty(), lightID);
+            }
+        }
+
+        private void AddDirectionalLight(IDirectionalLight light, int idx)
+        {
+            _context.SetUniform(
+                _shaderDescriptor,
+                $"dirLights[{idx}].direction",
+                light.Direction.X,
+                light.Direction.Y,
+                light.Direction.Z
+            );
+
+            _context.SetUniform(
+                _shaderDescriptor,
+                $"dirLights[{idx}].strength",
+                light.Strength
+            );
+
+            _context.SetUniform(
+                _shaderDescriptor,
+                $"dirLights[{idx}].diffuse",
+                light.Diffuse.Red,
+                light.Diffuse.Green,
+                light.Diffuse.Blue
+            );
+
+            _context.SetUniform(
+                _shaderDescriptor,
+                $"dirLights[{idx}].specular",
+                light.Specular.Red,
+                light.Specular.Green,
+                light.Specular.Blue
+            );
+        }
+
+        private void AddPointLight(IPointLight light, int idx)
         {
             _context.SetUniform(
                 _shaderDescriptor,
@@ -163,6 +199,70 @@ namespace Lab1.Render
             );
         }
 
+        private void AddSpotLight(ISpotLight light, int idx)
+        {
+            _context.SetUniform(
+                _shaderDescriptor,
+                $"spotLights[{idx}].position",
+                light.Position.X,
+                light.Position.Y,
+                light.Position.Z
+            );
+
+            _context.SetUniform(
+                _shaderDescriptor,
+                $"spotLights[{idx}].direction",
+                light.Direction.X,
+                light.Direction.Y,
+                light.Direction.Z
+            );
+
+            _context.SetUniform(
+                _shaderDescriptor,
+                $"spotLights[{idx}].cutOff",
+                light.CutOff
+            );
+
+            _context.SetUniform(
+                _shaderDescriptor,
+                $"spotLights[{idx}].outerCutOff",
+                light.OuterCutOff
+            );
+
+            _context.SetUniform(
+                _shaderDescriptor,
+                $"spotLights[{idx}].diffuse",
+                light.Diffuse.Red,
+                light.Diffuse.Green,
+                light.Diffuse.Blue
+            );
+
+            _context.SetUniform(
+                _shaderDescriptor,
+                $"spotLights[{idx}].specular",
+                light.Specular.Red,
+                light.Specular.Green,
+                light.Specular.Blue
+            );
+
+            _context.SetUniform(
+                _shaderDescriptor,
+                $"spotLights[{idx}].constant",
+                light.Constant
+            );
+
+            _context.SetUniform(
+                _shaderDescriptor,
+                $"spotLights[{idx}].linear",
+                light.Linear
+            );
+
+            _context.SetUniform(
+                _shaderDescriptor,
+                $"spotLights[{idx}].quadratic",
+                light.Quadratic
+            );
+        }
 
         public override void Attach(ICamera camera)
         {

@@ -8,8 +8,13 @@ namespace Lab1.Render
         private GL _gl;
         private ShaderContext _shaderContext;
         private IEnvironment _currentEnvironment;
-        private IDirectionalLight _currentDirectionalLight;
-        private IPointLight[] _currentPointLights;
+        private IDirectionalLight[] _currentDirectionalLights = new IDirectionalLight[0];
+        private IPointLight[] _currentPointLights = new IPointLight[0];
+        private ISpotLight[] _currentSpotLights = new ISpotLight[0];
+
+        public static int MaxDirectionalLightCount { get; } = 2;
+        public static int MaxPointLightCount { get; } = 16;
+        public static int MaxSpotLightCount { get; } = 4;
 
         public RenderServer(GL gl)
         {
@@ -41,8 +46,9 @@ namespace Lab1.Render
                 renderable.Material.Use(viewport, renderable.View);
 
                 renderable.Material.Attach(_currentEnvironment);
-                renderable.Material.Attach(_currentDirectionalLight);
+                renderable.Material.Attach(_currentDirectionalLights);
                 renderable.Material.Attach(_currentPointLights);
+                renderable.Material.Attach(_currentSpotLights);
                 renderable.Material.Attach(viewport.Camera);
 
                 unsafe
@@ -74,14 +80,19 @@ namespace Lab1.Render
             _currentEnvironment = environment;
         }
 
-        public void ApplyDirectionalLight(Viewport viewport, IDirectionalLight directionalLight)
+        public void ApplyDirectionalLight(Viewport viewport, IDirectionalLight[] directionalLights)
         {
-            _currentDirectionalLight = directionalLight;
+            _currentDirectionalLights = directionalLights;
         }
 
         public void ApplyPointLights(Viewport viewport, IPointLight[] pointLights)
         {
             _currentPointLights = pointLights;
+        }
+
+        public void ApplySpotLights(Viewport viewport, ISpotLight[] spotLights)
+        {
+            _currentSpotLights = spotLights;
         }
 
         public void ChangeContextSize(Vector2 size)
