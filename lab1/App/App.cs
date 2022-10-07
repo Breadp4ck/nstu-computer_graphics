@@ -40,8 +40,6 @@ namespace Lab1.App
             var spot = new Spot("Прожектор");
             var wall = new Wall("Стена");
 
-            spot.Color = new Color(0.0f, 1.0f, 1.0f);
-
             spot.Translate(0.0f, 0.0f, 6.0f);
             wall.Translate(0.0f, 0.0f, 10.0f);
 
