@@ -20,11 +20,6 @@ namespace Lab1.App
         private ImGuiController _controller;
         private ImGuiNET.ImGuiViewport _viewport;
         private Vector3 _color;
-        private Vector2 _position = Vector2.Zero;
-        private Vector2 _scale = Vector2.Zero;
-        private float _rotation = 0.0f;
-        private int _currentLayer = 0;
-        private string[] _layers = new string[3] { "kek", "lol", "arbidol" };
 
         private GL _gl;
         private IView _window;
@@ -61,11 +56,8 @@ namespace Lab1.App
         {
             _controller.Update(delta);
 
+            ProcessColorPicker();
             ProcessModeInfo();
-            ProcessLayerSelector();
-            ProcessLayerProperties();
-
-            ImGuiNET.ImGui.ShowDemoWindow();
 
             _controller.Render();
         }
@@ -81,43 +73,14 @@ namespace Lab1.App
             }
         }
 
-        private void ProcessLayerSelector()
+        private void ProcessColorPicker()
         {
             ImGuiNET.ImGui.SetNextWindowBgAlpha(0.35f);
-            ImGuiNET.ImGui.SetNextWindowPos(
-                new Vector2((_viewport.Size.X - 300.0f),
-                10.0f
-            ));
+            ImGuiNET.ImGui.SetNextWindowPos(new Vector2(10.0f, 10.0f));
 
-            ImGuiNET.ImGui.Begin("Layers", _windowFlags);
-            {
-                ImGuiNET.ImGui.BeginListBox("Layers");
-                {
-                    ImGuiNET.ImGui.Selectable("Item 1");
-                    ImGuiNET.ImGui.SmallButton("x");
-                    ImGuiNET.ImGui.Selectable("Item 2");
-                    ImGuiNET.ImGui.Selectable("Item 3");
-                }
-                ImGuiNET.ImGui.EndListBox();
-            }
-            ImGuiNET.ImGui.End();
-        }
-
-        private void ProcessLayerProperties()
-        {
-            ImGuiNET.ImGui.SetNextWindowBgAlpha(0.35f);
-            ImGuiNET.ImGui.SetNextWindowPos(
-                new Vector2((_viewport.Size.X - 300.0f),
-                100.0f
-            ));
-
-            ImGuiNET.ImGui.Begin("Layer Properties", _windowFlags);
+            ImGuiNET.ImGui.Begin("Color Picker", _windowFlags);
             {
                 ImGuiNET.ImGui.ColorEdit3("Color", ref _color);
-
-                ImGuiNET.ImGui.DragFloat2("Position", ref _position);
-                ImGuiNET.ImGui.DragFloat2("Scale", ref _scale);
-                ImGuiNET.ImGui.SliderFloat("Rotation", ref _rotation, 0.0f, 360.0f);
             }
             ImGuiNET.ImGui.End();
         }
