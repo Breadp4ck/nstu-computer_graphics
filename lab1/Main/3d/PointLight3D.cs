@@ -8,7 +8,7 @@ namespace Lab1.Main.Scene3D
     {
         public Color Diffuse { get; set; } = new Color(1.0f, 1.0f, 1.0f);
         public Color Specular { get; set; } = new Color(1.0f, 1.0f, 1.0f);
-        public Vector3 Position { get => Transform.Position; set => Transform.Position = value; }
+        public Vector3 Position { get => GlobalTransform.Position; }
         public float Strength { get; set; } = 1.0f;
 
         public float Constant { get; set; } = 1.0f;

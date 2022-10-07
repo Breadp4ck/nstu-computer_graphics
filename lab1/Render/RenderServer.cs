@@ -1,6 +1,8 @@
 using Silk.NET.OpenGL;
 using System.Numerics;
 
+using Lab1.Resources;
+
 namespace Lab1.Render
 {
     public class RenderServer
@@ -29,20 +31,25 @@ namespace Lab1.Render
             BufferObject<ushort> ebo = new BufferObject<ushort>(_gl, renderable.Indices, BufferTargetARB.ElementArrayBuffer, BufferUsageARB.DynamicCopy);
 
             VertexArrayObject<float, ushort> vao = new VertexArrayObject<float, ushort>(_gl, vbo, ebo);
-            // vao.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, 3, 0);
 
             // Next chapter in engine development
             vao.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, 8, 0);
             vao.VertexAttributePointer(1, 3, VertexAttribPointerType.Float, 8, 3);
             vao.VertexAttributePointer(2, 2, VertexAttribPointerType.Float, 8, 6);
 
-            renderable.Initialize(_shaderContext, vao, vbo, ebo);
+            Material material = renderable.MaterialResource is StandartMaterialResource
+                ? new StandartMaterial(_shaderContext)
+                : new ColorMaterial(_shaderContext);
+
+            renderable.Initialize(material, vao, vbo, ebo);
         }
 
         public void Render(Viewport viewport, IRenderable renderable)
         {
             if ((viewport.Camera.VisualMask & renderable.VisualMask) > 0)
             {
+                renderable.Vao!.Bind();
+
                 renderable.Material.Use(viewport, renderable.View);
 
                 renderable.Material.Attach(_currentEnvironment);

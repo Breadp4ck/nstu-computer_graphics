@@ -13,6 +13,46 @@ namespace Lab1.Render
                 uniform mat4 view;
                 uniform mat4 projection;
 
+                void main() {
+                    gl_Position = projection * view * model * vec4(aPos, 1.0);
+                }
+            ";
+
+            string fragColorSource = @"#version 330 core
+                out vec4 FragColor;
+
+                struct Material {
+                    vec4 color;
+                };
+
+                uniform Material material;
+
+                void main() {
+                    FragColor = material.color;
+                }
+            ";
+
+            Shader vert = new Shader(context, ShaderType.VertexShader, vertColorSource);
+            Shader frag = new Shader(context, ShaderType.FragmentShader, fragColorSource);
+
+            ShaderProgram program = new ShaderProgram(context);
+            program.AttachShader(vert);
+            program.AttachShader(frag);
+
+            return program;
+        }
+
+        public static ShaderProgram PbrShader(ShaderContext context)
+        {
+            string vertColorSource = @"#version 330 core
+                layout (location = 0) in vec3 aPos;
+                layout (location = 1) in vec3 aNormal;
+                layout (location = 2) in vec2 aTexCoords;
+
+                uniform mat4 model;
+                uniform mat4 view;
+                uniform mat4 projection;
+
                 out vec3 Normal;
                 out vec3 FragPos;
                 out vec2 TexCoords;

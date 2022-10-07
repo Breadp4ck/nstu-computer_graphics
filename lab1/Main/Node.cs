@@ -4,7 +4,7 @@ namespace Lab1.Main
 {
     public class Node
     {
-        public Scene? Scene { get; protected set; }
+        public Scene? Scene { get; internal protected set; }
         public InputServer? InputServer { get; protected set; }
         public Node? Parent { get; protected set; }
         public List<Node> Childs { get; protected set; } = new List<Node>();
@@ -29,18 +29,21 @@ namespace Lab1.Main
 
         public virtual void AddChild(Node child)
         {
-            if (Scene!.IsInTree(child))
+            if (Scene != null)
             {
-                // TODO: or maybe better throw exception?
-                Console.WriteLine($"ERROR: The node {child.Name} is already in the Scene. It will not be added.");
-                return;
+                if (Scene!.IsInTree(child))
+                {
+                    // TODO: or maybe better throw exception?
+                    Console.WriteLine($"ERROR: The node {child.Name} is already in the Scene. It will not be added.");
+                    return;
+                }
+
+                child.Scene = Scene!;
+                Scene!.LoadNode(child);
             }
 
             Childs.Add(child);
             child.Parent = this;
-
-            child.Scene = Scene!;
-            Scene!.LoadNode(child);
         }
 
         public virtual void Ready() { }

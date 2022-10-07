@@ -15,7 +15,7 @@ namespace Lab1.Render
 
         public StandartMaterial(ShaderContext context) : base(context)
         {
-            _shaderProgram = ShaderLibrary.ColorShader(context);
+            _shaderProgram = ShaderLibrary.PbrShader(context);
             _shaderDescriptor = _shaderProgram.GetDescriptor();
         }
 

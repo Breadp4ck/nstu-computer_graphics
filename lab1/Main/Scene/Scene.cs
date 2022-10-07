@@ -44,6 +44,18 @@ namespace Lab1.Main
 
         internal void LoadNode(Node node)
         {
+            foreach (var child in node.Childs)
+            {
+                if (IsInTree(child))
+                {
+                    Console.WriteLine($"ERROR: The node {child.Name} is already in the Scene. It will not be added.");
+                    return;
+                }
+
+                child.Scene = this;
+                LoadNode(child);
+            }
+
             if (node is IRenderable)
             {
                 _renderServer.Load((IRenderable)node);
