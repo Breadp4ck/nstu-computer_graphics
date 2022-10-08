@@ -13,12 +13,16 @@ namespace Lab1.App.States
         public override void Enter()
         {
             _initialMousePosition = _app.MousePosition;
-            // _initialRotateFactor = 
+            // TODO: set rotation of current layer
+
+            _app.MouseVisible(false);
         }
 
         public override void Exit()
         {
             _initialRotateFactor = _initialRotateFactor + (_initialMousePosition.X - _app.MousePosition.X) * 0.01f;
+
+            _app.MouseVisible(true);
         }
 
         public override void OnKeyDown(IKeyboard keyboard, Key key, int arg3)
@@ -48,6 +52,7 @@ namespace Lab1.App.States
         public override void OnMouseMove(IMouse mouse, System.Numerics.Vector2 position)
         {
             _app.UpdateHoverVertexPosition();
+            _app.UpdateLayerGuiData(_app.LayerID);
 
             _app.Layers[_app.LayerID].Transform.Rotation = Quaternion.CreateFromRotationMatrix(
                 Matrix4x4.CreateRotationZ(

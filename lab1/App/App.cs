@@ -27,6 +27,8 @@ namespace Lab1.App
         public Vector2 MouseOffset { get; private set; } = new Vector2(0.0f, 0.0f);
         public Vector2 MousePosition { get => _context.MousePosition; }
 
+        public float CameraScale { get => _camera.Transform.Scale.X; }
+
         public App()
         {
             var options = WindowOptions.Default;
@@ -56,6 +58,19 @@ namespace Lab1.App
             _window.Close();
         }
 
+        public void MouseVisible(bool visibility)
+        {
+            if (visibility)
+            {
+                _context.Mouse!.Cursor.CursorMode = CursorMode.Normal;
+            }
+            else
+            {
+                _context.Mouse!.Cursor.CursorMode = CursorMode.Disabled;
+            }
+
+        }
+
         public void NextLayer()
         {
             Layers[LayerID].Transperent = 0.2f;
@@ -70,9 +85,36 @@ namespace Lab1.App
             Layers[LayerID].Transperent = 1.0f;
         }
 
-        public void SetGuiColorInputByLayerColor(int layerID)
+        public void UpdateLayerGuiData(int layerID)
         {
+            var position = Layers[layerID].Transform.Position;
+            var scale = Layers[layerID].Transform.Scale;
+            var rotation = Layers[layerID].Transform.Rotation;
+
             _context.Gui!.Color = Layers[layerID].Color;
+            _context.Gui!.Position = new Vector2(position.X, position.Y);
+            _context.Gui!.Scale = new Vector2(scale.X, scale.Y);
+
+            var angle = (float)(System.Math.Asin(rotation.Z) * 2.0);
+
+            _context.Gui!.Rotation = angle * 180.0f / (float)System.Math.PI;
+        }
+
+        public void UpdateLayerDataWithGui(int layerID)
+        {
+            var position = _context.Gui!.Position;
+            var scale = _context.Gui!.Scale;
+
+            float rotation = (float)(_context.Gui!.Rotation * System.Math.PI / 180.0);
+            var quaternion = new Quaternion();
+
+            quaternion.W = (float)System.Math.Cos(rotation / 2.0);
+            quaternion.Z = (float)System.Math.Sin(rotation / 2.0);
+
+            Layers[layerID].Color = _context.Gui!.Color;
+            Layers[layerID].Transform.Position = new Vector3(position.X, position.Y, Layers[layerID].Transform.Position.Z);
+            Layers[layerID].Transform.Scale = new Vector3(scale.X, scale.Y, Layers[layerID].Transform.Scale.Z);
+            Layers[layerID].Transform.Rotation = quaternion;
         }
 
         public void AddLayer()
@@ -111,8 +153,8 @@ namespace Lab1.App
             {
                 Layers[LayerID].ChangeLastVertex(
                     new Vertex(
-                        (-_camera.CameraPosition.X + (2.0f * (_context.MousePosition.X) / _window.Size.X - 1.0f)) / (_camera.Transform.Scale),
-                        (-_camera.CameraPosition.Y - (2.0f * (_context.MousePosition.Y) / _window.Size.Y - 1.0f)) / (_camera.Transform.Scale * _camera.ViewportRatioXY)
+                        (-_camera.CameraPosition.X + (2.0f * (_context.MousePosition.X) / _window.Size.X - 1.0f)) / (_camera.Transform.Scale.X),
+                        (-_camera.CameraPosition.Y - (2.0f * (_context.MousePosition.Y) / _window.Size.Y - 1.0f)) / (_camera.Transform.Scale.X * _camera.ViewportRatioXY)
                     )
                 );
             }
@@ -128,8 +170,8 @@ namespace Lab1.App
         {
             Layers[LayerID].AddVertex(
                 new Vertex(
-                    (-_camera.CameraPosition.X + (2.0f * (_context.MousePosition.X) / _window.Size.X - 1.0f)) / (_camera.Transform.Scale),
-                    (-_camera.CameraPosition.Y - (2.0f * (_context.MousePosition.Y) / _window.Size.Y - 1.0f)) / (_camera.Transform.Scale * _camera.ViewportRatioXY)
+                    (-_camera.CameraPosition.X + (2.0f * (_context.MousePosition.X) / _window.Size.X - 1.0f)) / (_camera.Transform.Scale.X),
+                    (-_camera.CameraPosition.Y - (2.0f * (_context.MousePosition.Y) / _window.Size.Y - 1.0f)) / (_camera.Transform.Scale.X * _camera.ViewportRatioXY)
                 )
             );
         }
@@ -172,13 +214,18 @@ namespace Lab1.App
                 _context.Mouse.Scroll += (IMouse _mouse, ScrollWheel scroll) =>
                 {
                     // Look like crap
-                    _camera.Transform.Scale += scroll.Y * 0.1f;
-                    _camera.Transform.Scale = _camera.Transform.Scale <= 2.5f ? _camera.Transform.Scale : 2.5f;
-                    _camera.Transform.Scale = _camera.Transform.Scale >= 0.1f ? _camera.Transform.Scale : 0.1f;
+                    var scale = _camera.Transform.Scale;
+
+                    scale.X += scroll.Y * 0.1f;
+                    scale.X = scale.X <= 2.5f ? scale.X : 2.5f;
+                    scale.X = scale.X >= 0.1f ? scale.X : 0.1f;
+
+                    scale.Y = scale.X;
+                    _camera.Transform.Scale = scale;
                 };
             }
 
-            Layers.Add(new Layer(_context.Gl!, Color.FromHSV(0.0f, 0.77f, 0.95f), 0.001f));
+            Layers.Add(new Layer(_context.Gl!, new Color(1.0f, 1.0f, 1.0f), 0.001f));
             Layers[0].Transperent = 0.2f;
 
             ChangeState("Spectate");
@@ -186,7 +233,7 @@ namespace Lab1.App
 
         private void OnWindowRender(double delta)
         {
-            Color background = Color.FromHSV(0.7f, 0.2f, 0.3f);
+            Color background = Color.FromHSV(0.7f, 0.2f, 0.1f);
             _context.FrameSetup(background);
 
             foreach (var layer in Layers)
@@ -197,7 +244,7 @@ namespace Lab1.App
             _context.Gui!.Process((float)delta);
             _states[CurrentState].Render(delta);
 
-            Layers[LayerID].Color = _context.Gui!.Color;
+            UpdateLayerDataWithGui(LayerID);
         }
 
         private void OnWindowResize(Vector2D<int> size)

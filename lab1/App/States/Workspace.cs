@@ -22,12 +22,12 @@ namespace Lab1.App.States
 
                 case Key.Z:
                     _app.PreviousLayer();
-                    _app.SetGuiColorInputByLayerColor(_app.LayerID);
+                    _app.UpdateLayerGuiData(_app.LayerID);
                     break;
 
                 case Key.X:
                     _app.NextLayer();
-                    _app.SetGuiColorInputByLayerColor(_app.LayerID);
+                    _app.UpdateLayerGuiData(_app.LayerID);
                     break;
 
                 case Key.N:

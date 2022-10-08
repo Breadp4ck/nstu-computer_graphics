@@ -19,9 +19,9 @@ namespace Lab1.App
             ImGuiNET.ImGuiWindowFlags.NoMove;
         private ImGuiController _controller;
         private ImGuiNET.ImGuiViewport _viewport;
-        private Vector3 _color;
+        private Vector3 _color = Vector3.One;
         private Vector2 _position = Vector2.Zero;
-        private Vector2 _scale = Vector2.Zero;
+        private Vector2 _scale = Vector2.One;
         private float _rotation = 0.0f;
         private int _currentLayer = 0;
         private string[] _layers = new string[3] { "kek", "lol", "arbidol" };
@@ -31,6 +31,22 @@ namespace Lab1.App
         private IInputContext _input;
 
         public string ModeName = "default";
+
+        public Color Color
+        {
+            get => new Color(_color.X, _color.Y, _color.Z);
+            set
+            {
+                _color.X = value.Red;
+                _color.Y = value.Green;
+                _color.Z = value.Blue;
+            }
+        }
+
+        public Vector2 Position { get => _position; set => _position = value; }
+        public Vector2 Scale { get => _scale; set => _scale = value; }
+        public float Rotation { get => _rotation; set => _rotation = value; }
+        public int CurrentLayer { get => _currentLayer; set => _currentLayer = value; }
 
         public Gui(GL gl, IView window, IInputContext input)
         {
@@ -65,20 +81,9 @@ namespace Lab1.App
             ProcessLayerSelector();
             ProcessLayerProperties();
 
-            ImGuiNET.ImGui.ShowDemoWindow();
+            // ImGuiNET.ImGui.ShowDemoWindow();
 
             _controller.Render();
-        }
-
-        public Color Color
-        {
-            get => new Color(_color.X, _color.Y, _color.Z);
-            set
-            {
-                _color.X = value.Red;
-                _color.Y = value.Green;
-                _color.Z = value.Blue;
-            }
         }
 
         private void ProcessLayerSelector()
@@ -91,14 +96,16 @@ namespace Lab1.App
 
             ImGuiNET.ImGui.Begin("Layers", _windowFlags);
             {
-                ImGuiNET.ImGui.BeginListBox("Layers");
+                ImGuiNET.ImGui.PushItemWidth(234.0f);
+                ImGuiNET.ImGui.ListBox("Layers", ref _currentLayer, _layers, _layers.Length);
+
+                ImGuiNET.ImGui.BeginGroup();
                 {
-                    ImGuiNET.ImGui.Selectable("Item 1");
-                    ImGuiNET.ImGui.SmallButton("x");
-                    ImGuiNET.ImGui.Selectable("Item 2");
-                    ImGuiNET.ImGui.Selectable("Item 3");
+                    ImGuiNET.ImGui.Button("Add");
+                    ImGuiNET.ImGui.SameLine();
+                    ImGuiNET.ImGui.Button("Remove");
                 }
-                ImGuiNET.ImGui.EndListBox();
+                ImGuiNET.ImGui.EndGroup();
             }
             ImGuiNET.ImGui.End();
         }
@@ -108,16 +115,16 @@ namespace Lab1.App
             ImGuiNET.ImGui.SetNextWindowBgAlpha(0.35f);
             ImGuiNET.ImGui.SetNextWindowPos(
                 new Vector2((_viewport.Size.X - 300.0f),
-                100.0f
+                124.0f
             ));
 
             ImGuiNET.ImGui.Begin("Layer Properties", _windowFlags);
             {
                 ImGuiNET.ImGui.ColorEdit3("Color", ref _color);
 
-                ImGuiNET.ImGui.DragFloat2("Position", ref _position);
-                ImGuiNET.ImGui.DragFloat2("Scale", ref _scale);
-                ImGuiNET.ImGui.SliderFloat("Rotation", ref _rotation, 0.0f, 360.0f);
+                ImGuiNET.ImGui.DragFloat2("Position", ref _position, 0.01f);
+                ImGuiNET.ImGui.DragFloat2("Scale", ref _scale, 0.01f);
+                ImGuiNET.ImGui.SliderFloat("Rotation", ref _rotation, -180.0f, 180.0f);
             }
             ImGuiNET.ImGui.End();
         }

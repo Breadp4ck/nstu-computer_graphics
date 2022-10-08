@@ -16,12 +16,16 @@ namespace Lab1.App.States
 
             var position = _app.Layers[_app.LayerID].Transform.Position;
             _initialPosition = new Vector2(position.X, position.Y);
+
+            _app.MouseVisible(false);
         }
 
         public override void Exit()
         {
             var position = _app.Layers[_app.LayerID].Transform.Position;
             _initialPosition = new Vector2(position.X, position.Y);
+
+            _app.MouseVisible(true);
         }
 
         public override void OnKeyDown(IKeyboard keyboard, Key key, int arg3)
@@ -51,11 +55,12 @@ namespace Lab1.App.States
         public override void OnMouseMove(IMouse mouse, System.Numerics.Vector2 position)
         {
             _app.UpdateHoverVertexPosition();
+            _app.UpdateLayerGuiData(_app.LayerID);
 
             Vector2 offset = _initialMousePosition - _app.MousePosition;
             offset.X = -offset.X;
 
-            Vector2 pos = _initialPosition + offset * 0.002f;
+            Vector2 pos = _initialPosition + offset * 0.002f / _app.CameraScale;
             _app.Layers[_app.LayerID].Transform.Position = new Vector3(pos.X, pos.Y, 0.0f);
         }
     }

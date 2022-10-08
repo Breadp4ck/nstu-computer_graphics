@@ -81,7 +81,7 @@ namespace Lab1.Core
             }
 
             _shader.SetUniform("color", _color.Red, _color.Green, _color.Blue, _color.Alpha);
-            _shader.SetUniform("model", model * camera.Transform.Scale);
+            _shader.SetUniform("model", model * camera.Transform.Scale.X);
             _shader.SetUniform("view", camera.Transform.ViewMatrix);
             _shader.SetUniform("projection", Matrix4x4.CreateOrthographic(2.0f, 2.0f * camera.ViewportRatioYX, 1e-3f, 1e2f));
 
