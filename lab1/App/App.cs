@@ -20,7 +20,8 @@ namespace Lab1.App
         private System.Numerics.Vector2 previousPosition = new System.Numerics.Vector2(0.0f, 0.0f);
 
         public bool Dragging { get; set; } = false;
-        public int LayerID = 0;
+        public int LayerID { get; set; } = 0;
+        public int TotalLayers { get; private set; } = 0;
 
         private Dictionary<string, AppState> _states = new Dictionary<string, AppState>();
         public string CurrentState { get; private set; } = "Spectate";
@@ -87,6 +88,14 @@ namespace Lab1.App
 
         public void UpdateLayerGuiData(int layerID)
         {
+            if (_context.Gui!.CurrentLayer != layerID)
+            {
+                MakeAllLayersTransperent(0.2f);
+                Layers[layerID].Transperent = 1.0f;
+            }
+
+            _context.Gui!.CurrentLayer = layerID;
+
             var position = Layers[layerID].Transform.Position;
             var scale = Layers[layerID].Transform.Scale;
             var rotation = Layers[layerID].Transform.Rotation;
@@ -98,10 +107,12 @@ namespace Lab1.App
             var angle = (float)(System.Math.Asin(rotation.Z) * 2.0);
 
             _context.Gui!.Rotation = angle * 180.0f / (float)System.Math.PI;
+            _context.Gui!.LayerNames = Layers.Select(layer => layer.Name).ToArray();
         }
 
         public void UpdateLayerDataWithGui(int layerID)
         {
+
             var position = _context.Gui!.Position;
             var scale = _context.Gui!.Scale;
 
@@ -119,7 +130,8 @@ namespace Lab1.App
 
         public void AddLayer()
         {
-            Layers.Add(new Layer(_context.Gl!, Color.FromHSV(0.0f, 0.77f, 0.95f), LayerID * 0.001f));
+            TotalLayers += 1;
+            Layers.Add(new Layer(_context.Gl!, Color.FromHSV(0.0f, 0.77f, 0.95f), $"Layer {TotalLayers}", LayerID * 0.001f));
         }
 
         public void RemoveLayer()
@@ -225,7 +237,9 @@ namespace Lab1.App
                 };
             }
 
-            Layers.Add(new Layer(_context.Gl!, new Color(1.0f, 1.0f, 1.0f), 0.001f));
+            AddLayer();
+            UpdateLayerGuiData(LayerID);
+
             Layers[0].Transperent = 0.2f;
 
             ChangeState("Spectate");
@@ -244,6 +258,16 @@ namespace Lab1.App
             _context.Gui!.Process((float)delta);
             _states[CurrentState].Render(delta);
 
+
+            if (_context.Gui!.CurrentLayer != LayerID)
+            {
+                MakeAllLayersTransperent(0.2f);
+                Layers[_context.Gui!.CurrentLayer].Transperent = 1.0f;
+
+                UpdateLayerGuiData(_context.Gui!.CurrentLayer);
+            }
+
+            LayerID = _context.Gui!.CurrentLayer;
             UpdateLayerDataWithGui(LayerID);
         }
 

@@ -12,9 +12,12 @@ namespace Lab1.Core
         Color _color;
         private float _zIndex = 0.0f;
 
-        public Layer(GL context, Color color, float zIndex)
+        public string Name { get; set; } = "Layer";
+
+        public Layer(GL context, Color color, string name, float zIndex)
         {
             _color = color;
+            Name = name;
             _vertices = new List<Vertex>();
             _canvas = new Canvas(context, color);
             Transform = new Transform();

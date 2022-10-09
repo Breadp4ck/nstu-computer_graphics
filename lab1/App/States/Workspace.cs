@@ -43,6 +43,7 @@ namespace Lab1.App.States
                     }
 
                     _app.ChangeState("Edit");
+                    _app.UpdateLayerGuiData(_app.LayerID);
                     break;
 
                 case Key.G:
@@ -51,9 +52,11 @@ namespace Lab1.App.States
 
                 case Key.R:
                     _app.ChangeState("Rotate");
-                    // _app.RemoveLayer();
                     break;
 
+                case Key.D:
+                    _app.RemoveLayer();
+                    break;
 
                 case Key.S:
                     _app.ChangeState("Scale");

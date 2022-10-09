@@ -24,7 +24,7 @@ namespace Lab1.App
         private Vector2 _scale = Vector2.One;
         private float _rotation = 0.0f;
         private int _currentLayer = 0;
-        private string[] _layers = new string[3] { "kek", "lol", "arbidol" };
+        private string[] _layers = new string[0];
 
         private GL _gl;
         private IView _window;
@@ -47,6 +47,7 @@ namespace Lab1.App
         public Vector2 Scale { get => _scale; set => _scale = value; }
         public float Rotation { get => _rotation; set => _rotation = value; }
         public int CurrentLayer { get => _currentLayer; set => _currentLayer = value; }
+        public string[] LayerNames { get => _layers; set => _layers = value; }
 
         public Gui(GL gl, IView window, IInputContext input)
         {
@@ -81,7 +82,7 @@ namespace Lab1.App
             ProcessLayerSelector();
             ProcessLayerProperties();
 
-            // ImGuiNET.ImGui.ShowDemoWindow();
+            ImGuiNET.ImGui.ShowDemoWindow();
 
             _controller.Render();
         }
@@ -97,7 +98,25 @@ namespace Lab1.App
             ImGuiNET.ImGui.Begin("Layers", _windowFlags);
             {
                 ImGuiNET.ImGui.PushItemWidth(234.0f);
-                ImGuiNET.ImGui.ListBox("Layers", ref _currentLayer, _layers, _layers.Length);
+
+                ImGuiNET.ImGui.BeginListBox("Layers", new Vector2(0.0f, 5.0f * ImGuiNET.ImGui.GetTextLineHeightWithSpacing()));
+                {
+                    for (int idx = 0; idx < _layers.Length; idx++)
+                    {
+                        bool isSelected = (CurrentLayer == idx);
+
+                        if (ImGuiNET.ImGui.Selectable(_layers[idx], isSelected))
+                        {
+                            CurrentLayer = idx;
+                        }
+
+                        if (isSelected)
+                        {
+                            ImGuiNET.ImGui.SetItemDefaultFocus();
+                        }
+                    }
+                }
+                ImGuiNET.ImGui.EndListBox();
 
                 ImGuiNET.ImGui.BeginGroup();
                 {
@@ -115,7 +134,7 @@ namespace Lab1.App
             ImGuiNET.ImGui.SetNextWindowBgAlpha(0.35f);
             ImGuiNET.ImGui.SetNextWindowPos(
                 new Vector2((_viewport.Size.X - 300.0f),
-                124.0f
+                152.0f
             ));
 
             ImGuiNET.ImGui.Begin("Layer Properties", _windowFlags);
