@@ -49,6 +49,19 @@ namespace Lab1.App
         public int CurrentLayer { get => _currentLayer; set => _currentLayer = value; }
         public string[] LayerNames { get => _layers; set => _layers = value; }
 
+
+        public delegate void AddLayerButtonPressed();
+        public delegate void RemoveLayerButtonPressed();
+        public delegate void SpectateModeButtonPressed();
+        public delegate void WorkspaceModeButtonPressed();
+        public delegate void EditModeButtonPressed();
+
+        public AddLayerButtonPressed OnAddLayerButtonPressed;
+        public RemoveLayerButtonPressed OnRemoveLayerButtonPressed;
+        public SpectateModeButtonPressed OnSpectateModeButtonPressed;
+        public WorkspaceModeButtonPressed OnWorkspaceModeButtonPressed;
+        public EditModeButtonPressed OnEditModeButtonPressed;
+
         public Gui(GL gl, IView window, IInputContext input)
         {
             _gl = gl;
@@ -78,11 +91,12 @@ namespace Lab1.App
         {
             _controller.Update(delta);
 
+            ProcessMode();
             ProcessModeInfo();
             ProcessLayerSelector();
             ProcessLayerProperties();
 
-            ImGuiNET.ImGui.ShowDemoWindow();
+            // ImGuiNET.ImGui.ShowDemoWindow();
 
             _controller.Render();
         }
@@ -120,9 +134,54 @@ namespace Lab1.App
 
                 ImGuiNET.ImGui.BeginGroup();
                 {
-                    ImGuiNET.ImGui.Button("Add");
+                    bool addClicked = ImGuiNET.ImGui.Button("Add") ? true : false;
                     ImGuiNET.ImGui.SameLine();
-                    ImGuiNET.ImGui.Button("Remove");
+                    bool removeClicked = ImGuiNET.ImGui.Button("Remove") ? true : false;
+
+                    if (addClicked && OnAddLayerButtonPressed != null)
+                    {
+                        OnAddLayerButtonPressed();
+                    }
+
+                    if (removeClicked && OnRemoveLayerButtonPressed != null)
+                    {
+                        OnRemoveLayerButtonPressed();
+                    }
+                }
+                ImGuiNET.ImGui.EndGroup();
+            }
+            ImGuiNET.ImGui.End();
+        }
+
+        private void ProcessMode()
+        {
+            ImGuiNET.ImGui.SetNextWindowBgAlpha(0.35f);
+            ImGuiNET.ImGui.SetNextWindowPos(new Vector2(10.0f, 10.0f));
+
+            ImGuiNET.ImGui.Begin("App Modes", _windowFlags);
+            {
+                ImGuiNET.ImGui.BeginGroup();
+                {
+                    bool spectateClicked = ImGuiNET.ImGui.Button("S") ? true : false;
+                    ImGuiNET.ImGui.SameLine();
+                    bool workspaceClicked = ImGuiNET.ImGui.Button("W") ? true : false;
+                    ImGuiNET.ImGui.SameLine();
+                    bool editClicked = ImGuiNET.ImGui.Button("E") ? true : false;
+
+                    if (spectateClicked && OnSpectateModeButtonPressed != null)
+                    {
+                        OnSpectateModeButtonPressed();
+                    }
+
+                    if (workspaceClicked && OnWorkspaceModeButtonPressed != null)
+                    {
+                        OnWorkspaceModeButtonPressed();
+                    }
+
+                    if (editClicked && OnEditModeButtonPressed != null)
+                    {
+                        OnEditModeButtonPressed();
+                    }
                 }
                 ImGuiNET.ImGui.EndGroup();
             }

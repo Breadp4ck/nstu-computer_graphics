@@ -88,7 +88,7 @@ namespace Lab1.App
 
         public void UpdateLayerGuiData(int layerID)
         {
-            if (_context.Gui!.CurrentLayer != layerID)
+            if (_context.Gui!.CurrentLayer != layerID && CurrentState != "Spectate")
             {
                 MakeAllLayersTransperent(0.2f);
                 Layers[layerID].Transperent = 1.0f;
@@ -132,11 +132,13 @@ namespace Lab1.App
         {
             TotalLayers += 1;
             Layers.Add(new Layer(_context.Gl!, Color.FromHSV(0.0f, 0.77f, 0.95f), $"Layer {TotalLayers}", LayerID * 0.001f));
+
+            UpdateLayerGuiData(LayerID);
         }
 
         public void RemoveLayer()
         {
-            if (Layers.Count > 0)
+            if (Layers.Count > 1)
             {
                 Layers.RemoveAt(LayerID);
                 LayerID = Layers.Count == LayerID ? LayerID - 1 : LayerID;
@@ -145,6 +147,8 @@ namespace Lab1.App
             {
                 Layers[0].Clear();
             }
+
+            UpdateLayerGuiData(LayerID);
         }
 
         public void AddHoverVertex()
@@ -166,7 +170,7 @@ namespace Lab1.App
                 Layers[LayerID].ChangeLastVertex(
                     new Vertex(
                         (-_camera.CameraPosition.X + (2.0f * (_context.MousePosition.X) / _window.Size.X - 1.0f)) / (_camera.Transform.Scale.X),
-                        (-_camera.CameraPosition.Y - (2.0f * (_context.MousePosition.Y) / _window.Size.Y - 1.0f)) / (_camera.Transform.Scale.X * _camera.ViewportRatioXY)
+                        (-_camera.CameraPosition.Y * _camera.ViewportRatioXY - (2.0f * (_context.MousePosition.Y) / _window.Size.Y - 1.0f)) / (_camera.Transform.Scale.X * _camera.ViewportRatioXY)
                     )
                 );
             }
@@ -183,7 +187,7 @@ namespace Lab1.App
             Layers[LayerID].AddVertex(
                 new Vertex(
                     (-_camera.CameraPosition.X + (2.0f * (_context.MousePosition.X) / _window.Size.X - 1.0f)) / (_camera.Transform.Scale.X),
-                    (-_camera.CameraPosition.Y - (2.0f * (_context.MousePosition.Y) / _window.Size.Y - 1.0f)) / (_camera.Transform.Scale.X * _camera.ViewportRatioXY)
+                    (-_camera.CameraPosition.Y * _camera.ViewportRatioXY - (2.0f * (_context.MousePosition.Y) / _window.Size.Y - 1.0f)) / (_camera.Transform.Scale.X * _camera.ViewportRatioXY)
                 )
             );
         }
@@ -240,6 +244,35 @@ namespace Lab1.App
             AddLayer();
             UpdateLayerGuiData(LayerID);
 
+            _context.Gui!.OnAddLayerButtonPressed += AddLayer;
+            _context.Gui!.OnRemoveLayerButtonPressed += RemoveLayer;
+
+            _context.Gui!.OnSpectateModeButtonPressed += () =>
+            {
+                // TODO: Bug:
+                // Pressed button affects on field as mouse click
+                // So we remove the point with RemoveHoverVertex();
+                if (CurrentState == "Edit")
+                {
+                    RemoveHoverVertex();
+                }
+
+                ChangeState("Spectate");
+            };
+            _context.Gui!.OnWorkspaceModeButtonPressed += () =>
+            {
+                // TODO: Bug:
+                // Pressed button affects on field as mouse click
+                // So we remove the point with RemoveHoverVertex();
+                if (CurrentState == "Edit")
+                {
+                    RemoveHoverVertex();
+                }
+
+                ChangeState("Workspace");
+            };
+            _context.Gui!.OnEditModeButtonPressed += () => ChangeState("Edit");
+
             Layers[0].Transperent = 0.2f;
 
             ChangeState("Spectate");
@@ -261,8 +294,11 @@ namespace Lab1.App
 
             if (_context.Gui!.CurrentLayer != LayerID)
             {
-                MakeAllLayersTransperent(0.2f);
-                Layers[_context.Gui!.CurrentLayer].Transperent = 1.0f;
+                if (CurrentState != "Spectate")
+                {
+                    MakeAllLayersTransperent(0.2f);
+                    Layers[_context.Gui!.CurrentLayer].Transperent = 1.0f;
+                }
 
                 UpdateLayerGuiData(_context.Gui!.CurrentLayer);
             }
