@@ -30,8 +30,8 @@ namespace Lab1.App
             _foundation.MeshData = new CubePrimitive();
             _foundation.MaterialResource = new StandartMaterialResource();
 
-            _foundation.Transform.Scale = 0.2f;
-            _flashlight.Transform.Scale = 0.1f;
+            _foundation.Transform.Scale = new Vector3(0.2f);
+            _flashlight.Transform.Scale = new Vector3(0.1f);
 
             _flashlight.Translate(0.0f, 0.0f, 0.3f);
             _light.Translate(0.0f, 0.0f, 0.3f);
@@ -53,5 +53,4 @@ namespace Lab1.App
             _angle += delta;
         }
     }
-
 }

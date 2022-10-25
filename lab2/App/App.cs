@@ -30,7 +30,7 @@ namespace Lab1.App
                 (float)(System.Math.PI / 4.0f)
             );
 
-            sun.Diffuse = new Color(1.0f, 0.78f, 0.0f);
+            sun.Diffuse = new Color(1.0f, 1.0f, 1.0f);
 
             _scene.Root.AddChild(sun);
 
@@ -63,11 +63,25 @@ namespace Lab1.App
             lamp1.AddChild(lamp2);
             lamp2.AddChild(lamp3);
 
+            //  Мельница
+            // ---------------------------------------
+
+            var mill = new WindMill("Мельница", 5);
+            mill.Translate(-20.0f, 0.0f, 20.0f);
+            _scene.Root.AddChild(mill);
+
+            //  Земля
+            // ---------------------------------------
+
+            var ground = new Ground("Земля");
+            ground.Translate(0.0f, -1.0f, 0.0f);
+            _scene.Root.AddChild(ground);
+
             //  Окружение
             // ---------------------------------------
 
             var env = new Environment3D("Environment");
-            env.SkyColor = new Color(0.9f, 0.5f, 0.12f);
+            env.SkyColor = new Color(0.506f, 0.776f, 0.910f);
 
             // Добавление камеры и окружения в сцену
             _scene.AttachViewport(env, camera);

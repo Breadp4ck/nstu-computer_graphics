@@ -6,7 +6,7 @@ namespace Lab1.Math
     {
         public Vector3 Position { get; set; } = new Vector3(0, 0, 0);
 
-        public float Scale { get; set; } = 1f;
+        public Vector3 Scale { get; set; } = new Vector3(1.0f, 1.0f, 1.0f);
 
         public Quaternion Rotation { get; set; } = Quaternion.Identity;
 

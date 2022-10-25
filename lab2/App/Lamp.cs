@@ -23,7 +23,7 @@ namespace Lab1.App
 
         public Lamp(string name) : base(name)
         {
-            _lamp.Transform.Scale = 0.1f;
+            _lamp.Transform.Scale = new Vector3(0.1f);
 
             AddChild(_lamp);
             AddChild(_light);
