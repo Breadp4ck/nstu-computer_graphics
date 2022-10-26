@@ -1,5 +1,4 @@
 using Lab1.Main.Scene3D;
-using Lab1.Core;
 using Lab1.Resources;
 
 using System.Numerics;

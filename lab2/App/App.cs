@@ -70,6 +70,13 @@ namespace Lab1.App
             mill.Translate(-20.0f, 0.0f, 20.0f);
             _scene.Root.AddChild(mill);
 
+            //  Автомобили
+            // ---------------------------------------
+
+            var car1 = new Car("Автомобиль 1");
+            car1.Translate(0.0f, -0.15f, -12.5f);
+            _scene.Root.AddChild(car1);
+
             //  Земля
             // ---------------------------------------
 
