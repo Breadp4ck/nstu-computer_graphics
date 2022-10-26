@@ -7,7 +7,7 @@ using System.Numerics;
 
 namespace Lab1.App
 {
-    public class WindMill : MeshInstance3D
+    public class WindMill : Node3D
     {
         private float _angle = 0.0f;
         private MeshInstance3D _mill = new MeshInstance3D("Мельничные крылья");
@@ -15,7 +15,7 @@ namespace Lab1.App
         private MillFoundation _foundation = new MillFoundation("Основание");
         private List<Sail> _sails = new List<Sail>();
 
-        public class Sail : MeshInstance3D
+        public class Sail : Node3D
         {
             private MeshInstance3D _sail;
             private MeshInstance3D _foundation;
@@ -41,7 +41,7 @@ namespace Lab1.App
             }
         }
 
-        public class MillFoundation : MeshInstance3D
+        public class MillFoundation : Node3D
         {
             private MeshInstance3D[] _lowLevel = {
                 new MeshInstance3D("Нижний ярус 1"),
@@ -111,7 +111,6 @@ namespace Lab1.App
         {
             _roller.MeshData = new CubePrimitive();
             _roller.MaterialResource = new StandartMaterialResource();
-            _roller.MeshData = new CubePrimitive();
 
             _roller.Transform.Scale = new Vector3(0.4f, 0.4f, 2.0f);
             _roller.Translate(0.0f, 0.0f, 1.0f);
