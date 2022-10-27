@@ -18,6 +18,8 @@ namespace Lab1.App
         {
             private MeshInstance3D _sail;
             private MeshInstance3D _foundation;
+            private StandartMaterialResource _material = new StandartMaterialResource();
+
             public Sail(string name) : base(name)
             {
                 _sail = new MeshInstance3D($"{name}, крыло");
@@ -26,8 +28,11 @@ namespace Lab1.App
                 _sail.MeshData = new CubePrimitive();
                 _foundation.MeshData = new CubePrimitive();
 
-                _sail.MaterialResource = new StandartMaterialResource();
-                _foundation.MaterialResource = new StandartMaterialResource();
+                _material.Diffuse = new Core.Color(1.0f, 1.0f, 1.0f);
+                _material.Specular = new Core.Color(0.0f, 0.0f, 0.0f);
+
+                _sail.MaterialResource = _material;
+                _foundation.MaterialResource = _material;
 
                 _sail.Transform.Scale = new Vector3(0.3f, 1.0f, 0.02f);
                 _sail.Transform.Rotation = Quaternion.CreateFromAxisAngle(Vector3.UnitY, -0.2f);
