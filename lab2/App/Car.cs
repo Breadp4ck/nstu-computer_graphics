@@ -1,6 +1,8 @@
 using System.Numerics;
 using Lab1.Main.Scene3D;
 using Lab1.Resources;
+using Lab1.Core;
+using System.Numerics;
 
 namespace Lab1.App
 {
@@ -33,6 +35,15 @@ namespace Lab1.App
         private ColorMaterialResource _headlightMaterial = new ColorMaterialResource();
         private ColorMaterialResource _backlightMaterial = new ColorMaterialResource();
 
+        private SpotLight3D[] _headlightSpots = {
+            new SpotLight3D("Правая фара"),
+            new SpotLight3D("Левая фара"),
+        };
+        private PointLight3D[] _backlightPoints = {
+            new PointLight3D("Правая фара"),
+            new PointLight3D("Левая фара"),
+        };
+
         public Car(string name) : base(name)
         {
             // Меши
@@ -57,11 +68,11 @@ namespace Lab1.App
 
             // Материалы
 
-            _carMaterial.Diffuse = new Core.Color(0.55f, 0.0f, 0.0f);
-            _wheelMaterial.Diffuse = new Core.Color(0.16f, 0.14f, 0.13f);
-            _windowMaterial.Diffuse = new Core.Color(0.35f, 0.58f, 0.9f);
-            _headlightMaterial.Color = new Core.Color(0.98f, 0.86f, 0.05f);
-            _backlightMaterial.Color = new Core.Color(0.99f, 0.08f, 0.0f);
+            _carMaterial.Diffuse = new Color(0.55f, 0.0f, 0.0f);
+            _wheelMaterial.Diffuse = new Color(0.16f, 0.14f, 0.13f);
+            _windowMaterial.Diffuse = new Color(0.35f, 0.58f, 0.9f);
+            _headlightMaterial.Color = new Color(0.98f, 0.86f, 0.65f);
+            _backlightMaterial.Color = new Color(0.99f, 0.08f, 0.0f);
 
             _wheels[0].MaterialResource = _wheelMaterial;
             _wheels[1].MaterialResource = _wheelMaterial;
@@ -83,10 +94,10 @@ namespace Lab1.App
 
             // Колёса
 
-            _wheels[0].Transform.Scale = new System.Numerics.Vector3(0.4f, 0.4f, 0.1f);
-            _wheels[1].Transform.Scale = new System.Numerics.Vector3(0.4f, 0.4f, 0.1f);
-            _wheels[2].Transform.Scale = new System.Numerics.Vector3(0.4f, 0.4f, 0.1f);
-            _wheels[3].Transform.Scale = new System.Numerics.Vector3(0.4f, 0.4f, 0.1f);
+            _wheels[0].Transform.Scale = new Vector3(0.4f, 0.4f, 0.1f);
+            _wheels[1].Transform.Scale = new Vector3(0.4f, 0.4f, 0.1f);
+            _wheels[2].Transform.Scale = new Vector3(0.4f, 0.4f, 0.1f);
+            _wheels[3].Transform.Scale = new Vector3(0.4f, 0.4f, 0.1f);
 
             _wheels[0].Translate(1.2f, 0.15f, 1.0f);
             _wheels[1].Translate(1.2f, 0.15f, -1.0f);
@@ -95,18 +106,18 @@ namespace Lab1.App
 
             // Корпус
 
-            _body.Transform.Scale = new System.Numerics.Vector3(2.0f, 0.5f, 1.0f);
-            _cabin.Transform.Scale = new System.Numerics.Vector3(1.0f, 0.4f, 0.9f);
+            _body.Transform.Scale = new Vector3(2.0f, 0.5f, 1.0f);
+            _cabin.Transform.Scale = new Vector3(1.0f, 0.4f, 0.9f);
 
             _body.Translate(0.0f, 0.70f, 0.0f);
             _cabin.Translate(0.0f, 1.35f, 0.0f);
 
             // Окна
 
-            _windows[0].Transform.Scale = new System.Numerics.Vector3(0.3f, 0.3f, 0.88f);
-            _windows[1].Transform.Scale = new System.Numerics.Vector3(0.3f, 0.3f, 0.88f);
-            _windows[2].Transform.Scale = new System.Numerics.Vector3(0.9f, 0.3f, 0.02f);
-            _windows[3].Transform.Scale = new System.Numerics.Vector3(0.9f, 0.3f, 0.02f);
+            _windows[0].Transform.Scale = new Vector3(0.3f, 0.3f, 0.88f);
+            _windows[1].Transform.Scale = new Vector3(0.3f, 0.3f, 0.88f);
+            _windows[2].Transform.Scale = new Vector3(0.9f, 0.3f, 0.02f);
+            _windows[3].Transform.Scale = new Vector3(0.9f, 0.3f, 0.02f);
 
             _windows[0].Translate(1.0f, 1.28f, 0.0f);
             _windows[1].Translate(-1.0f, 1.28f, 0.0f);
@@ -118,15 +129,43 @@ namespace Lab1.App
 
             // Фары
 
-            _lights[0].Transform.Scale = new System.Numerics.Vector3(0.01f, 0.1f, 0.2f);
-            _lights[1].Transform.Scale = new System.Numerics.Vector3(0.01f, 0.1f, 0.2f);
-            _lights[2].Transform.Scale = new System.Numerics.Vector3(0.01f, 0.1f, 0.2f);
-            _lights[3].Transform.Scale = new System.Numerics.Vector3(0.01f, 0.1f, 0.2f);
+            _lights[0].Transform.Scale = new Vector3(0.01f, 0.1f, 0.2f);
+            _lights[1].Transform.Scale = new Vector3(0.01f, 0.1f, 0.2f);
+            _lights[2].Transform.Scale = new Vector3(0.01f, 0.1f, 0.2f);
+            _lights[3].Transform.Scale = new Vector3(0.01f, 0.1f, 0.2f);
 
             _lights[0].Translate(2.0f, 0.45f, 0.8f);
             _lights[1].Translate(2.0f, 0.45f, -0.8f);
             _lights[2].Translate(-2.0f, 0.45f, 0.8f);
             _lights[3].Translate(-2.0f, 0.45f, -0.8f);
+
+            _headlightSpots[0].Translate(2.0f, 0.45f, 0.8f);
+            _headlightSpots[1].Translate(2.0f, 0.45f, -0.8f);
+
+            _headlightSpots[0].Transform.Rotation =
+                Quaternion.CreateFromAxisAngle(Vector3.UnitY, (float)(System.Math.PI / 2.0 - 0.3)) *
+                Quaternion.CreateFromAxisAngle(Vector3.UnitX, (float)(System.Math.PI / 12.0));
+            _headlightSpots[1].Transform.Rotation =
+                Quaternion.CreateFromAxisAngle(Vector3.UnitY, (float)(System.Math.PI / 2.0 - 0.3)) *
+                Quaternion.CreateFromAxisAngle(Vector3.UnitX, (float)(System.Math.PI / 12.0));
+
+            _headlightSpots[0].Diffuse = new Color(1.0f, 1.0f, 0.6f);
+            _headlightSpots[1].Diffuse = new Color(1.0f, 1.0f, 0.6f);
+
+            _headlightSpots[0].Strength = 10.0f;
+            _headlightSpots[1].Strength = 10.0f;
+
+            _headlightSpots[0].OuterCutOff = 0.75f;
+            _headlightSpots[1].OuterCutOff = 0.75f;
+
+            _backlightPoints[0].Translate(-2.05f, 0.45f, 0.8f);
+            _backlightPoints[1].Translate(-2.05f, 0.45f, -0.8f);
+
+            _backlightPoints[0].Diffuse = new Color(1.0f, 0.0f, 0.0f);
+            _backlightPoints[1].Diffuse = new Color(1.0f, 0.0f, 0.0f);
+
+            _backlightPoints[0].Strength = 0.5f;
+            _backlightPoints[1].Strength = 0.5f;
 
             // Добавление в сцену
 
@@ -144,6 +183,11 @@ namespace Lab1.App
             AddChild(_lights[1]);
             AddChild(_lights[2]);
             AddChild(_lights[3]);
+
+            AddChild(_headlightSpots[0]);
+            AddChild(_headlightSpots[1]);
+            AddChild(_backlightPoints[0]);
+            AddChild(_backlightPoints[1]);
 
             AddChild(_body);
             AddChild(_cabin);
