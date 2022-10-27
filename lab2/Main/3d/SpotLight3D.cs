@@ -13,7 +13,7 @@ namespace Lab1.Main.Scene3D
         {
             get
             {
-                var rotation = Transform.Rotation;
+                var rotation = GlobalTransform.Rotation;
 
                 return new Vector3(
                     2.0f * (rotation.X * rotation.Z + rotation.W * rotation.Y),
@@ -21,7 +21,6 @@ namespace Lab1.Main.Scene3D
                     1.0f - 2.0f * (rotation.X * rotation.X + rotation.Y * rotation.Y)
                 );
             }
-
         }
         public float Strength { get; set; } = 1.0f;
         public float CutOff { get; set; } = 0.97f;
