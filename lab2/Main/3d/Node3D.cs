@@ -20,7 +20,8 @@ namespace Lab1.Main.Scene3D
                 {
                     var parent = ((Node3D)Parent).GlobalTransform;
 
-                    global.Position += parent.Position;
+                    // global.Position += parent.Position;
+                    global.Position = parent.Position + parent.Scale * Vector3.Transform(global.Position, parent.Rotation);
                     global.Scale *= parent.Scale;
                     global.Rotation = Quaternion.Concatenate(global.Rotation, parent.Rotation);
                 }
