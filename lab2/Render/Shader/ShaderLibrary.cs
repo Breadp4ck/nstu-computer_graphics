@@ -92,6 +92,7 @@ namespace Lab1.Render
 
                     vec3 diffuse;
                     vec3 specular;
+                    float strength;
 
                     float constant;
                     float linear;
@@ -106,6 +107,7 @@ namespace Lab1.Render
 
                     vec3 diffuse;
                     vec3 specular;
+                    float strength;
 
                     float constant;
                     float linear;
@@ -195,7 +197,7 @@ namespace Lab1.Render
                     vec3 diffuse = light.diffuse * diff * material.diffuse;
                     vec3 specular = light.specular * spec * material.specular;
 
-                    return attenuation * (diffuse + specular);
+                    return light.strength * attenuation * (diffuse + specular);
                 }
 
                 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
@@ -228,7 +230,7 @@ namespace Lab1.Render
                     diffuse *= attenuation * intensity;
                     specular *= attenuation * intensity;
                         
-                    return diffuse + specular;
+                    return light.strength * (diffuse + specular);
                 }
             ";
 

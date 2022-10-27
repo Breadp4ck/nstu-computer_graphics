@@ -182,6 +182,12 @@ namespace Lab1.Render
 
             _context.SetUniform(
                 _shaderDescriptor,
+                $"pointLights[{idx}].strength",
+                light.Strength
+            );
+
+            _context.SetUniform(
+                _shaderDescriptor,
                 $"pointLights[{idx}].constant",
                 light.Constant
             );
@@ -243,6 +249,12 @@ namespace Lab1.Render
                 light.Specular.Red,
                 light.Specular.Green,
                 light.Specular.Blue
+            );
+
+            _context.SetUniform(
+                _shaderDescriptor,
+                $"spotLights[{idx}].strength",
+                light.Strength
             );
 
             _context.SetUniform(
