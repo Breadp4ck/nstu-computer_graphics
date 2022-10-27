@@ -36,7 +36,7 @@ namespace Lab1.Window
 
             options.Title = "Simple Drawer";
             options.Size = new Vector2D<int>(1280, 720);
-            options.PreferredDepthBufferBits = 24;
+            options.PreferredDepthBufferBits = 32;
 
 
             _window = Silk.NET.Windowing.Window.Create(options);
