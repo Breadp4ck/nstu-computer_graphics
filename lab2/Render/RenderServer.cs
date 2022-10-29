@@ -16,7 +16,7 @@ namespace Lab1.Render
 
         public static int MaxDirectionalLightCount { get; } = 2;
         public static int MaxPointLightCount { get; } = 16;
-        public static int MaxSpotLightCount { get; } = 4;
+        public static int MaxSpotLightCount { get; } = 8;
 
         public RenderServer(GL gl)
         {

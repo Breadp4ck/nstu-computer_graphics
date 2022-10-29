@@ -120,7 +120,7 @@ namespace Lab1.Render
 
                 #define CNT_DIR_LIGHTS 2
                 #define CNT_POINT_LIGHTS 16
-                #define CNT_SPOT_LIGHTS 4
+                #define CNT_SPOT_LIGHTS 8
 
                 uniform Env env;
                 uniform Material material;
