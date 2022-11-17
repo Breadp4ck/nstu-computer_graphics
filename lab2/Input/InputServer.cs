@@ -35,8 +35,14 @@ namespace Lab1.Input
             Actions["movement_right"] = new InputEventKey(this, KeyboardButton.D);
             Actions["movement_upward"] = new InputEventKey(this, KeyboardButton.Space);
             Actions["movement_down"] = new InputEventKey(this, KeyboardButton.Shift);
+            Actions["info"] = new InputEventKey(this, KeyboardButton.Tab);
 
             _mouse.Cursor.CursorMode = CursorMode.Disabled;
+        }
+
+        public void SetCursorMode(CursorMode mode)
+        {
+            _mouse!.Cursor.CursorMode = mode;
         }
 
         private void HandleRawKeyUpInput(IKeyboard keyboard, Key key, int arg3)

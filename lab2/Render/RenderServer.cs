@@ -14,7 +14,7 @@ namespace Lab1.Render
         private IPointLight[] _currentPointLights = new IPointLight[0];
         private ISpotLight[] _currentSpotLights = new ISpotLight[0];
 
-        public static int MaxDirectionalLightCount { get; } = 2;
+        public static int MaxDirectionalLightCount { get; } = 1;
         public static int MaxPointLightCount { get; } = 16;
         public static int MaxSpotLightCount { get; } = 8;
 

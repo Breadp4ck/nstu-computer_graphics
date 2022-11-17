@@ -1,6 +1,7 @@
 using Lab1.Render;
 using Lab1.Input;
 using Lab1.Window;
+using Lab1.Gui;
 
 using Lab1.Main.Scene3D;
 
@@ -14,11 +15,11 @@ namespace Lab1.Main
         private WindowServer _window;
         private RenderServer _renderServer;
         private InputServer _inputServer;
+        private GuiServer _guiServer;
 
         private List<IDirectionalLight> _directionalLights = new List<IDirectionalLight>();
         private List<IPointLight> _pointLights = new List<IPointLight>();
         private List<ISpotLight> _spotLights = new List<ISpotLight>();
-
 
         public Node Root { get; init; }
 
@@ -29,6 +30,11 @@ namespace Lab1.Main
             _window = new WindowServer();
             _renderServer = new RenderServer(_window.GetGlContext());
             _inputServer = new InputServer(_window.GetInputContext());
+            _guiServer = new GuiServer(
+                _window.GetGlContext(),
+                _window.GetViewContext(),
+                _window.GetInputContext()
+            );
 
             _window.OnWindowStartsRender += Process;
             _inputServer.OnInputEmited += Input;
@@ -61,7 +67,7 @@ namespace Lab1.Main
                 _renderServer.Load((IRenderable)node);
             }
 
-            if (_pointLights.Count < RenderServer.MaxDirectionalLightCount && node is IDirectionalLight)
+            if (_directionalLights.Count < RenderServer.MaxDirectionalLightCount && node is IDirectionalLight)
             {
                 _directionalLights.Add((IDirectionalLight)node);
             }
@@ -78,6 +84,8 @@ namespace Lab1.Main
 
             node.AttachInputServer(_inputServer);
             _nodes.Add(node);
+
+            node.Ready();
         }
 
         public bool IsInTree(Node node)
@@ -96,6 +104,8 @@ namespace Lab1.Main
         protected override void Process(float delta)
         {
             base.Process(delta);
+
+            _guiServer.SetupFrame(delta);
 
             // It must be in WindowServer, but there it is not working
             // I mean, _gl.Viewport(size);
@@ -127,6 +137,8 @@ namespace Lab1.Main
                     }
                 }
             }
+
+            _guiServer.RenderFrame();
         }
 
         protected void Input(InputEvent input)

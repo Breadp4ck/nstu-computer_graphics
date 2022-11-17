@@ -118,7 +118,7 @@ namespace Lab1.Render
                     vec3 position;
                 };
 
-                #define CNT_DIR_LIGHTS 2
+                #define CNT_DIR_LIGHTS 1
                 #define CNT_POINT_LIGHTS 16
                 #define CNT_SPOT_LIGHTS 8
 

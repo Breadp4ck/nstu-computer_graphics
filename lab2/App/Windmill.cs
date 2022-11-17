@@ -6,7 +6,7 @@ using System.Numerics;
 
 namespace Lab1.App
 {
-    public class WindMill : Node3D
+    public class Windmill : Node3D
     {
         private float _angle = 0.0f;
         private MeshInstance3D _mill = new MeshInstance3D("Мельничные крылья");
@@ -47,6 +47,9 @@ namespace Lab1.App
 
         public class MillFoundation : Node3D
         {
+            private StandartMaterialResource _primaryMaterial = new StandartMaterialResource();
+            private StandartMaterialResource _secondMaterial = new StandartMaterialResource();
+
             private MeshInstance3D[] _lowLevel = {
                 new MeshInstance3D("Нижний ярус 1"),
                 new MeshInstance3D("Нижний ярус 2"),
@@ -76,7 +79,11 @@ namespace Lab1.App
 
             public MillFoundation(string name) : base(name)
             {
-                var material = new StandartMaterialResource();
+                _primaryMaterial.Diffuse = new Core.Color(0.2f, 0.2f, 0.2f);
+                _secondMaterial.Diffuse = new Core.Color(0.4f, 0.4f, 0.4f);
+
+                _secondMaterial.Specular = new Core.Color(0.0f, 0.0f, 0.0f);
+                _primaryMaterial.Specular = new Core.Color(0.0f, 0.0f, 0.0f);
 
                 for (int idx = 0; idx < 6; idx++)
                 {
@@ -84,9 +91,9 @@ namespace Lab1.App
                     _highLevel[idx].MeshData = new CubePrimitive();
                     _roof[idx].MeshData = new CubePrimitive();
 
-                    _lowLevel[idx].MaterialResource = material;
-                    _highLevel[idx].MaterialResource = material;
-                    _roof[idx].MaterialResource = material;
+                    _lowLevel[idx].MaterialResource = _primaryMaterial;
+                    _highLevel[idx].MaterialResource = _secondMaterial;
+                    _roof[idx].MaterialResource = _primaryMaterial;
 
                     var angle = Math.Functions.ToRadians(60.0f * idx);
 
@@ -111,7 +118,7 @@ namespace Lab1.App
             }
         }
 
-        public WindMill(string name, ushort sailCount) : base(name)
+        public Windmill(string name, ushort sailCount) : base(name)
         {
             _roller.MeshData = new CubePrimitive();
             _roller.MaterialResource = new StandartMaterialResource();

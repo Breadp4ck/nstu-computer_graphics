@@ -4,12 +4,9 @@ using Silk.NET.Input;
 using Silk.NET.Maths;
 
 using System.Numerics;
-using Lab1.Input;
 
 namespace Lab1.Window
 {
-
-
     public delegate void WindowLoaded();
     public delegate void WindowStartsRender(float delta);
     public delegate void WindowResized(Vector2 size);
@@ -76,6 +73,11 @@ namespace Lab1.Window
         public IInputContext GetInputContext()
         {
             return _input!;
+        }
+
+        public IView GetViewContext()
+        {
+            return _window!;
         }
 
         private void OnWindowLoad()

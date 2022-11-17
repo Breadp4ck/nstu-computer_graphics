@@ -8,9 +8,15 @@ namespace Lab1.App
     public class FlyCamera3D : Camera3D
     {
         private Vector2 cameraRotation = new Vector2((float)(-System.Math.PI / 2.0f), 0.0f);
+        private bool _stoped = false;
 
-        public float Speed { get; private set; } = 10.0f;
+        public float Speed { get; private set; } = 20.0f;
         public FlyCamera3D(string name) : base(name) { }
+
+        public override void Ready()
+        {
+            base.Ready();
+        }
 
         public override void Process(float delta)
         {
@@ -65,7 +71,7 @@ namespace Lab1.App
         {
             base.Input(input);
 
-            if (input is InputMouseMotion)
+            if (!_stoped && input is InputMouseMotion)
             {
                 var offset = ((InputMouseMotion)input).Offset;
 
@@ -79,6 +85,22 @@ namespace Lab1.App
                 else if (cameraRotation.Y < -(System.Math.PI - 0.02) / 2.0)
                 {
                     cameraRotation.Y = -(float)(System.Math.PI - 0.02) / 2.0f;
+                }
+            }
+
+            if (input is InputEventKey
+                     && ((InputEventKey)input).Button == KeyboardButton.Tab
+                     && input.IsInvoked)
+            {
+                if (_stoped)
+                {
+                    _stoped = false;
+                    InputServer!.SetCursorMode(Silk.NET.Input.CursorMode.Disabled);
+                }
+                else
+                {
+                    _stoped = true;
+                    InputServer!.SetCursorMode(Silk.NET.Input.CursorMode.Normal);
                 }
             }
         }

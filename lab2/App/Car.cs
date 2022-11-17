@@ -43,6 +43,13 @@ namespace Lab1.App
             new PointLight3D("Правая фара"),
             new PointLight3D("Левая фара"),
         };
+        public float Speed { get; set; } = 20.0f;
+
+        public Color Color
+        {
+            get => _carMaterial.Diffuse;
+            set => _carMaterial.Diffuse = value;
+        }
 
         public Car(string name) : base(name)
         {
@@ -164,8 +171,8 @@ namespace Lab1.App
             _backlightPoints[0].Diffuse = new Color(1.0f, 0.0f, 0.0f);
             _backlightPoints[1].Diffuse = new Color(1.0f, 0.0f, 0.0f);
 
-            _backlightPoints[0].Strength = 0.5f;
-            _backlightPoints[1].Strength = 0.5f;
+            _backlightPoints[0].Strength = 0.7f;
+            _backlightPoints[1].Strength = 0.7f;
 
             // Добавление в сцену
 
