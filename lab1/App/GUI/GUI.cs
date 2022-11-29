@@ -55,12 +55,16 @@ namespace Lab1.App
         public delegate void SpectateModeButtonPressed();
         public delegate void WorkspaceModeButtonPressed();
         public delegate void EditModeButtonPressed();
+        public delegate void CameraZoomForawardButtonPressed();
+        public delegate void CameraZoomBackButtonPressed();
 
         public AddLayerButtonPressed OnAddLayerButtonPressed;
         public RemoveLayerButtonPressed OnRemoveLayerButtonPressed;
         public SpectateModeButtonPressed OnSpectateModeButtonPressed;
         public WorkspaceModeButtonPressed OnWorkspaceModeButtonPressed;
         public EditModeButtonPressed OnEditModeButtonPressed;
+        public CameraZoomForawardButtonPressed OnCameraZoomForawardButtonPressed;
+        public CameraZoomBackButtonPressed OnCameraZoomBackButtonPressed;
 
         public Gui(GL gl, IView window, IInputContext input)
         {
@@ -93,12 +97,40 @@ namespace Lab1.App
 
             ProcessMode();
             ProcessModeInfo();
+            ProcessCameraButtons();
             ProcessLayerSelector();
             ProcessLayerProperties();
 
             // ImGuiNET.ImGui.ShowDemoWindow();
 
             _controller.Render();
+        }
+
+        private void ProcessCameraButtons()
+        {
+            ImGuiNET.ImGui.SetNextWindowBgAlpha(0.35f);
+            ImGuiNET.ImGui.SetNextWindowPos(new Vector2(120.0f, 10.0f));
+
+            ImGuiNET.ImGui.Begin("Camera", _windowFlags);
+            {
+                ImGuiNET.ImGui.BeginGroup();
+                {
+                    bool cameraZoomForward = ImGuiNET.ImGui.Button(" + ") ? true : false;
+                    ImGuiNET.ImGui.SameLine();
+                    bool cameraZoomBack = ImGuiNET.ImGui.Button(" - ") ? true : false;
+
+                    if (cameraZoomForward && OnCameraZoomForawardButtonPressed != null)
+                    {
+                        OnCameraZoomForawardButtonPressed();
+                    }
+
+                    if (cameraZoomBack && OnCameraZoomBackButtonPressed != null)
+                    {
+                        OnCameraZoomBackButtonPressed();
+                    }
+                }
+                ImGuiNET.ImGui.EndGroup();
+            }
         }
 
         private void ProcessLayerSelector()

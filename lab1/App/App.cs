@@ -229,7 +229,7 @@ namespace Lab1.App
 
                 _context.Mouse.Scroll += (IMouse _mouse, ScrollWheel scroll) =>
                 {
-                    // Look like crap
+                    // Looks like crap
                     var scale = _camera.Transform.Scale;
 
                     scale.X += scroll.Y * 0.1f;
@@ -239,6 +239,31 @@ namespace Lab1.App
                     scale.Y = scale.X;
                     _camera.Transform.Scale = scale;
                 };
+
+                _context.Gui!.OnCameraZoomForawardButtonPressed += () =>
+                {
+                    var scale = _camera.Transform.Scale;
+
+                    scale.X += 0.1f;
+                    scale.X = scale.X <= 2.5f ? scale.X : 2.5f;
+                    scale.X = scale.X >= 0.1f ? scale.X : 0.1f;
+
+                    scale.Y = scale.X;
+                    _camera.Transform.Scale = scale;
+                };
+
+                _context.Gui!.OnCameraZoomBackButtonPressed += () =>
+                {
+                    var scale = _camera.Transform.Scale;
+
+                    scale.X -= 0.1f;
+                    scale.X = scale.X <= 2.5f ? scale.X : 2.5f;
+                    scale.X = scale.X >= 0.1f ? scale.X : 0.1f;
+
+                    scale.Y = scale.X;
+                    _camera.Transform.Scale = scale;
+                };
+
             }
 
             AddLayer();
