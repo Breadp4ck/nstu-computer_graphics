@@ -63,8 +63,6 @@ namespace Lab1.Core
 
         public unsafe void Draw(Camera camera, Transform layerTransform)
         {
-            UpdateBuffer();
-
             _vao.Bind();
 
             // TODO: Deprecated
@@ -85,7 +83,7 @@ namespace Lab1.Core
             _shader.SetUniform("view", camera.Transform.ViewMatrix);
             _shader.SetUniform("projection", Matrix4x4.CreateOrthographic(2.0f, 2.0f * camera.ViewportRatioYX, 1e-3f, 1e2f));
 
-
+            UpdateBuffer();
             _context.DrawArrays(PrimitiveType.LineStrip, 0, (uint)_vertices.Length / 3);
             //_context.DrawElements(PrimitiveType.Lines, (uint)_indices.Length, DrawElementsType.UnsignedShort, null);
 

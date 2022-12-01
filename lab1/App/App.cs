@@ -16,6 +16,7 @@ namespace Lab1.App
 
         public List<Layer> Layers = new List<Layer>();
         private Camera _camera = new Camera();
+        private Origin _origin;
 
         private System.Numerics.Vector2 previousPosition = new System.Numerics.Vector2(0.0f, 0.0f);
 
@@ -269,6 +270,8 @@ namespace Lab1.App
             AddLayer();
             UpdateLayerGuiData(LayerID);
 
+            _origin = new Origin(_context.Gl!);
+
             _context.Gui!.OnAddLayerButtonPressed += AddLayer;
             _context.Gui!.OnRemoveLayerButtonPressed += RemoveLayer;
 
@@ -327,6 +330,12 @@ namespace Lab1.App
 
                 UpdateLayerGuiData(_context.Gui!.CurrentLayer);
             }
+
+            if (CurrentState != "Spectate")
+            {
+                _origin.Draw(_camera, Layers[_context.Gui!.CurrentLayer].Transform);
+            }
+
 
             LayerID = _context.Gui!.CurrentLayer;
             UpdateLayerDataWithGui(LayerID);
