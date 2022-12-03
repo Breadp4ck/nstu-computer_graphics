@@ -9,14 +9,24 @@ namespace Lab1.Core.Shaders
         private uint _shaderProgram;
         private GL _context;
 
-        public Shader(GL context, string vertexShaderSource, string fragmentShaderSource)
+        public Shader(GL context, string vertexShaderSource, string fragmentShaderSource, string? geometryShaderSource = null)
         {
             _context = context;
 
             uint vertexShader = CompileShader(ShaderType.VertexShader, vertexShaderSource);
             uint fragmentShader = CompileShader(ShaderType.FragmentShader, fragmentShaderSource);
 
-            _shaderProgram = CreateShaderProgram(vertexShader, fragmentShader);
+            if (geometryShaderSource != null)
+            {
+                uint geometryShader = CompileShader(ShaderType.GeometryShader, geometryShaderSource);
+                _shaderProgram = CreateShaderProgram(vertexShader, fragmentShader, geometryShader);
+
+                context.DeleteShader(geometryShader);
+            }
+            else
+            {
+                _shaderProgram = CreateShaderProgram(vertexShader, fragmentShader);
+            }
 
             context.DeleteShader(vertexShader);
             context.DeleteShader(fragmentShader);
@@ -56,6 +66,17 @@ namespace Lab1.Core.Shaders
             uint shaderProgram = _context.CreateProgram();
             _context.AttachShader(shaderProgram, vertexShader);
             _context.AttachShader(shaderProgram, fragmentShader);
+            _context.LinkProgram(shaderProgram);
+
+            return shaderProgram;
+        }
+
+        private uint CreateShaderProgram(uint vertexShader, uint fragmentShader, uint geometryShader)
+        {
+            uint shaderProgram = _context.CreateProgram();
+            _context.AttachShader(shaderProgram, vertexShader);
+            _context.AttachShader(shaderProgram, fragmentShader);
+            _context.AttachShader(shaderProgram, geometryShader);
             _context.LinkProgram(shaderProgram);
 
             return shaderProgram;
