@@ -32,10 +32,16 @@ namespace Lab1.Core.Shaders
             context.DeleteShader(fragmentShader);
         }
 
-        static Shader FromFiles(GL context, string vertexShaderSourcePath, string fragmentShaderSourcePath)
+        static Shader FromFiles(GL context, string vertexShaderSourcePath, string fragmentShaderSourcePath, string? geometryShaderSourcePath = null)
         {
             string vertexShaderSource = File.ReadAllText(vertexShaderSourcePath);
             string fragmentShaderSource = File.ReadAllText(fragmentShaderSourcePath);
+
+            if (geometryShaderSourcePath != null)
+            {
+                string geometryShaderSource = File.ReadAllText(fragmentShaderSourcePath);
+                return new Shader(context, vertexShaderSource, fragmentShaderSource, geometryShaderSource);
+            }
 
             return new Shader(context, vertexShaderSource, fragmentShaderSource);
         }
