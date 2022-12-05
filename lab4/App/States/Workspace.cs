@@ -31,7 +31,7 @@ namespace Lab1.App.States
                     break;
 
                 case Key.N:
-                    if (_app.Layers.Last().GetVerticesCount() == 0)
+                    if (_app.Layers.Last().GetCurveElementsCount() == 0)
                     {
                         _app.LayerID = _app.Layers.Count - 1;
                         _app.ChangeState("Edit");

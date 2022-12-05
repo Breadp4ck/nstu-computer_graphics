@@ -54,7 +54,7 @@ namespace Lab1.App.States
 
         public override void OnMouseMove(IMouse mouse, System.Numerics.Vector2 position)
         {
-            _app.UpdateHoverVertexPosition();
+            _app.UpdateHoverPoint();
             _app.UpdateLayerGuiData(_app.LayerID);
 
             var offset = _initialMousePosition - _app.MousePosition;

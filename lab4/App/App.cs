@@ -22,6 +22,7 @@ namespace Lab1.App
         private System.Numerics.Vector2 previousPosition = new System.Numerics.Vector2(0.0f, 0.0f);
 
         public bool Dragging { get; set; } = false;
+        public bool BezierDragging { get; set; } = false;
         public int LayerID { get; set; } = 0;
         public int TotalLayers { get; private set; } = 0;
 
@@ -154,44 +155,49 @@ namespace Lab1.App
             UpdateLayerGuiData(LayerID);
         }
 
-        public void AddHoverVertex()
+        public void AddHoverPoint()
         {
             Layers[LayerID].DrawLast = false;
-
-            Layers[LayerID].AddVertex(
-                  new Vertex(
-                        (-_camera.CameraPosition.X + (2.0f * (_context.MousePosition.X) / _window.Size.X - 1.0f)) / (_camera.Transform.Scale.X),
-                        (-_camera.CameraPosition.Y * _camera.ViewportRatioXY - (2.0f * (_context.MousePosition.Y) / _window.Size.Y - 1.0f)) / (_camera.Transform.Scale.X * _camera.ViewportRatioXY)
-                  )
-              );
+            Layers[LayerID].AddPointSmooth(HoverablePoint());
         }
 
-        public void UpdateHoverVertexPosition()
+        public void UpdateHoverPoint()
         {
             if (Layers[LayerID].DrawLast == false)
             {
-                Layers[LayerID].ChangeLastVertex(
-                    new Vertex(
-                        (-_camera.CameraPosition.X + (2.0f * (_context.MousePosition.X) / _window.Size.X - 1.0f)) / (_camera.Transform.Scale.X),
-                        (-_camera.CameraPosition.Y * _camera.ViewportRatioXY - (2.0f * (_context.MousePosition.Y) / _window.Size.Y - 1.0f)) / (_camera.Transform.Scale.X * _camera.ViewportRatioXY)
-                    )
-                );
+                Layers[LayerID].ChangeLastPoint(HoverablePoint());
             }
         }
 
-        public void RemoveHoverVertex()
+        public void UpdateHoverPoint(Vertex position, Vertex offset)
         {
-            Layers[LayerID].DrawLast = true;
-            Layers[LayerID].RemoveLastVertex();
+            if (Layers[LayerID].DrawLast == false)
+            {
+                Layers[LayerID].ChangeLastPoint(position, offset);
+            }
         }
 
-        public void AddVertexByMousePosition()
+        public void RemoveHoverPoint()
         {
-            Layers[LayerID].AddVertex(
-                new Vertex(
-                    (-_camera.CameraPosition.X + (2.0f * (_context.MousePosition.X) / _window.Size.X - 1.0f)) / (_camera.Transform.Scale.X),
-                    (-_camera.CameraPosition.Y * _camera.ViewportRatioXY - (2.0f * (_context.MousePosition.Y) / _window.Size.Y - 1.0f)) / (_camera.Transform.Scale.X * _camera.ViewportRatioXY)
-                )
+            Layers[LayerID].DrawLast = true;
+            Layers[LayerID].RemoveLastPoint();
+        }
+
+        public void AddPoint(Vertex position, Vertex offset)
+        {
+            Layers[LayerID].AddPoint(position, offset);
+        }
+
+        public void AddPointByMousePosition()
+        {
+            Layers[LayerID].AddPointSmooth(HoverablePoint());
+        }
+
+        public Vertex HoverablePoint()
+        {
+            return new Vertex(
+                (-_camera.CameraPosition.X + (2.0f * (_context.MousePosition.X) / _window.Size.X - 1.0f)) / (_camera.Transform.Scale.X),
+                (-_camera.CameraPosition.Y * _camera.ViewportRatioXY - (2.0f * (_context.MousePosition.Y) / _window.Size.Y - 1.0f)) / (_camera.Transform.Scale.X * _camera.ViewportRatioXY)
             );
         }
 
@@ -285,7 +291,7 @@ namespace Lab1.App
                 // So we remove the point with RemoveHoverVertex();
                 if (CurrentState == "Edit")
                 {
-                    RemoveHoverVertex();
+                    RemoveHoverPoint();
                 }
 
                 ChangeState("Spectate");
@@ -297,7 +303,7 @@ namespace Lab1.App
                 // So we remove the point with RemoveHoverVertex();
                 if (CurrentState == "Edit")
                 {
-                    RemoveHoverVertex();
+                    RemoveHoverPoint();
                 }
 
                 ChangeState("Workspace");

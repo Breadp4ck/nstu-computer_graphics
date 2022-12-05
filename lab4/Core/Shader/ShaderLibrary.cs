@@ -6,7 +6,7 @@ namespace Lab1.Core.Shaders
     {
         public static Shader ColorShader(GL context)
         {
-            string vertColorSource = @"#version 330 core
+            string vertSource = @"#version 330 core
                 layout (location = 0) in vec3 vPos;
 
                 uniform mat4 model;
@@ -18,7 +18,7 @@ namespace Lab1.Core.Shaders
                 }
             ";
 
-            string fragColorSource = @"#version 330 core
+            string fragSource = @"#version 330 core
                 out vec4 FragColor;
 
                 uniform vec4 color;
@@ -28,12 +28,12 @@ namespace Lab1.Core.Shaders
                 }
             ";
 
-            return new Shader(context, vertColorSource, fragColorSource);
+            return new Shader(context, vertSource, fragSource);
         }
 
         public static Shader OriginShader(GL context)
         {
-            string vertColorSource = @"#version 330 core
+            string vertSource = @"#version 330 core
                 layout (location = 0) in vec3 vPos;
 
                 uniform mat4 model;
@@ -50,7 +50,7 @@ namespace Lab1.Core.Shaders
                 }
             ";
 
-            string fragColorSource = @"#version 330 core
+            string fragSource = @"#version 330 core
                 out vec4 FragColor;
 
                 in vec2 TexCoords;
@@ -73,12 +73,12 @@ namespace Lab1.Core.Shaders
                 }
             ";
 
-            return new Shader(context, vertColorSource, fragColorSource);
+            return new Shader(context, vertSource, fragSource);
         }
 
         public static Shader CellFieldShader(GL context)
         {
-            string vertColorSource = @"#version 330 core
+            string vertSource = @"#version 330 core
                 layout (location = 0) in vec3 vPos;
                 layout (location = 1) in vec2 vTexCoords;
 
@@ -94,7 +94,7 @@ namespace Lab1.Core.Shaders
                 }
             ";
 
-            string fragColorSource = @"#version 330 core
+            string fragSource = @"#version 330 core
                 out vec4 FragColor;
 
                 in vec2 TexCoords;
@@ -130,7 +130,64 @@ namespace Lab1.Core.Shaders
                 }
             ";
 
-            return new Shader(context, vertColorSource, fragColorSource);
+            return new Shader(context, vertSource, fragSource);
+        }
+
+        public static Shader QuibicBezierShader(GL context)
+        {
+            string vertSource = @"#version 330 core
+                layout (location = 0) in vec3 vPos;
+                layout (location = 1) in vec2 vTexCoords;
+
+                uniform mat4 model;
+                uniform mat4 view;
+                uniform mat4 projection;
+
+                void main() {
+                    gl_Position = projection * view * model * vec4(vPos, 1.0);
+                }
+            ";
+
+            string geomSource = @"#version 330 core
+                layout (lines_adjacency) in;
+                layout (line_strip, max_vertices = 30) out;
+
+                vec4 to_bezier(float t, vec4 p1, vec4 p2, vec4 p3, vec4 p4) {
+                    return     p1 * ( (1-t) * (1-t) * (1-t) ) +
+                           3 * p2 * (   t   * (1-t) * (1-t) ) +
+                           3 * p3 * (   t   *   t   * (1-t) ) +
+                               p4 * (   t   *   t   *   t   ) ;
+                }
+
+                void main() {
+                    int segments = 30;
+
+                    for (int segment = 0; segment < segments; segment++) {
+                        gl_Position = to_bezier(
+                            float(segment) / float(segments - 1),
+                            gl_in[0].gl_Position,
+                            gl_in[1].gl_Position,
+                            gl_in[2].gl_Position,
+                            gl_in[3].gl_Position
+                        );
+                        EmitVertex();
+                    }
+
+                    EndPrimitive();
+                } 
+            ";
+
+            string fragSource = @"#version 330 core
+                out vec4 FragColor;
+
+                uniform vec4 color;
+
+                void main() {
+                    FragColor = vec4(color);
+                }
+            ";
+
+            return new Shader(context, vertSource, fragSource, geomSource);
         }
     }
 }

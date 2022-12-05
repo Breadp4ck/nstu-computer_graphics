@@ -25,7 +25,7 @@ namespace Lab1.Core
         {
             _context = context;
             _color = color;
-            _shader = ShaderLibrary.ColorShader(context);
+            _shader = ShaderLibrary.QuibicBezierShader(context);
             _vertices = new float[0];
             _indices = new ushort[0];
 
@@ -39,7 +39,7 @@ namespace Lab1.Core
         {
             _context = context;
             _color = color;
-            _shader = ShaderLibrary.ColorShader(context);
+            _shader = ShaderLibrary.QuibicBezierShader(context);
             _vertices = new float[0];
             _indices = new ushort[0];
 
@@ -84,17 +84,17 @@ namespace Lab1.Core
             _shader.SetUniform("projection", Matrix4x4.CreateOrthographic(2.0f, 2.0f * camera.ViewportRatioYX, 1e-3f, 1e2f));
 
             UpdateBuffer();
-            _context.DrawArrays(PrimitiveType.LineStrip, 0, (uint)_vertices.Length / 3);
+            _context.DrawArrays(PrimitiveType.LinesAdjacency, 0, (uint)_vertices.Length / 3);
             //_context.DrawElements(PrimitiveType.Lines, (uint)_indices.Length, DrawElementsType.UnsignedShort, null);
 
-            if (DrawLast)
-            {
-                _context.DrawArrays(PrimitiveType.Points, 0, (uint)_vertices.Length / 3);
-            }
-            else if (_vertices.Length > 0)
-            {
-                _context.DrawArrays(PrimitiveType.Points, 0, (uint)_vertices.Length / 3 - 1);
-            }
+            // if (DrawLast)
+            // {
+            //     _context.DrawArrays(PrimitiveType.Points, 0, (uint)_vertices.Length / 3);
+            // }
+            // else if (_vertices.Length > 0)
+            // {
+            //     _context.DrawArrays(PrimitiveType.Points, 0, (uint)_vertices.Length / 3 - 1);
+            // }
         }
 
         public Color Color

@@ -51,7 +51,7 @@ namespace Lab1.App.States
 
         public override void OnMouseMove(IMouse mouse, System.Numerics.Vector2 position)
         {
-            _app.UpdateHoverVertexPosition();
+            _app.UpdateHoverPoint();
             _app.UpdateLayerGuiData(_app.LayerID);
 
             _app.Layers[_app.LayerID].Transform.Rotation = Quaternion.CreateFromRotationMatrix(
