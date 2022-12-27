@@ -48,6 +48,7 @@ namespace Lab1.App.States
 
                 case MouseButton.Right:
                     _app.Layers[_app.LayerID].RemoveLastPoint();
+                    _app.Layers[_app.LayerID].ChangeLastPoint(_app.HoverablePoint());
                     break;
             }
         }

@@ -49,8 +49,8 @@ namespace Lab1.Core
         {
             _curve.Add(new QubicBezierCurveElement(vertex));
 
-            float[] data = GetCurvePointsBuffer();
-            _canvas.AttachData(data);
+            _canvas.AttachData(GetCurvePointsBuffer());
+            _canvas.AttachLinesData(GetLinesBuffer());
         }
 
         public void AddPoint(Vertex vertex, Vertex offset)
@@ -61,48 +61,8 @@ namespace Lab1.Core
                 new Vertex(vertex.X + offset.X, vertex.Y + offset.Y)
             ));
 
-            float[] data = GetCurvePointsBuffer();
-            _canvas.AttachData(data);
-        }
-
-        public void AddPointSmooth(Vertex vertex)
-        {
-            if (_curve.Count > 0)
-            {
-                Vertex to = _curve.Last().Right.To(vertex);
-
-                _curve.Add(
-                    new QubicBezierCurveElement(
-                        vertex,
-                        new Vertex(vertex.X - to.X / 2.25f, vertex.Y - to.Y / 2.25f),
-                        new Vertex(vertex.X + to.X / 2.25f, vertex.Y + to.Y / 2.25f)
-                    )
-                );
-            }
-            else
-            {
-                _curve.Add(
-                    new QubicBezierCurveElement(
-                        vertex,
-                        new Vertex(vertex.X - 0.1f, vertex.Y - 0.1f),
-                        new Vertex(vertex.X + 0.1f, vertex.Y + 0.1f)
-                    )
-                );
-            }
-
-            float[] data = GetCurvePointsBuffer();
-            _canvas.AttachData(data);
-        }
-
-        public void RemovePoint(int position)
-        {
-            if (_curve.Count > 1 && position < _curve.Count)
-            {
-                _curve.RemoveAt(position);
-
-                float[] data = GetCurvePointsBuffer();
-                _canvas.AttachData(data);
-            }
+            _canvas.AttachData(GetCurvePointsBuffer());
+            _canvas.AttachLinesData(GetLinesBuffer());
         }
 
         public void RemoveLastPoint()
@@ -111,14 +71,54 @@ namespace Lab1.Core
             {
                 _curve.RemoveAt(_curve.Count - 1);
 
-                float[] data = GetCurvePointsBuffer();
-                _canvas.AttachData(data);
+                _canvas.AttachData(GetCurvePointsBuffer());
+                _canvas.AttachLinesData(GetLinesBuffer());
             }
+        }
+
+        private float[] GetLinesBuffer()
+        {
+            float[] data = new float[_curve.Count * 2 * 3];
+
+            if (_curve.Count > 1)
+            {
+                data[0] = _curve[0].Center.X;
+                data[1] = _curve[0].Center.Y;
+                data[2] = _zIndex;
+
+                data[3] = _curve[0].Right.X;
+                data[4] = _curve[0].Right.Y;
+                data[5] = _zIndex;
+            }
+
+            if (_curve.Count > 2)
+            {
+                data[data.Length - 6] = _curve[_curve.Count - 1].Left.X;
+                data[data.Length - 5] = _curve[_curve.Count - 1].Left.Y;
+                data[data.Length - 4] = _zIndex;
+
+                data[data.Length - 3] = _curve[_curve.Count - 1].Center.X;
+                data[data.Length - 2] = _curve[_curve.Count - 1].Center.Y;
+                data[data.Length - 1] = _zIndex;
+            }
+
+            for (int iElem = 1, iData = 6; iElem < _curve.Count - 1; iElem++)
+            {
+                data[iData++] = _curve[iElem].Left.X;
+                data[iData++] = _curve[iElem].Left.Y;
+                data[iData++] = _zIndex;
+
+                data[iData++] = _curve[iElem].Right.X;
+                data[iData++] = _curve[iElem].Right.Y;
+                data[iData++] = _zIndex;
+            }
+
+            return data;
         }
 
         private float[] GetCurvePointsBuffer()
         {
-            float[] data = new float[_curve.Count * 4 * 3];
+            float[] data = new float[(_curve.Count - 1) * 4 * 3 + 3];
 
             for (int iElem = 0, iData = 0; iElem < _curve.Count - 1; iElem++)
             {
@@ -139,6 +139,10 @@ namespace Lab1.Core
                 data[iData++] = _zIndex;
             }
 
+            data[data.Length - 3] = _curve[_curve.Count - 1].Right.X;
+            data[data.Length - 2] = _curve[_curve.Count - 1].Right.Y;
+            data[data.Length - 1] = _zIndex;
+
             return data;
         }
 
@@ -148,12 +152,7 @@ namespace Lab1.Core
             {
                 Vertex to = _curve.Last().Right.To(vertex);
 
-                var element = new QubicBezierCurveElement(
-                    vertex,
-                    new Vertex(vertex.X - to.X / 2.25f, vertex.Y - to.Y / 2.25f),
-                    new Vertex(vertex.X + to.X / 2.25f, vertex.Y + to.Y / 2.25f)
-                );
-
+                var element = new QubicBezierCurveElement(vertex);
                 _curve[_curve.Count - 1] = element;
 
                 // _canvas.ChangeLastPoint(vertex.X, vertex.Y, 0.0f);
@@ -231,18 +230,10 @@ namespace Lab1.Core
             get => _canvas.ApplyCanvasTransform;
         }
 
-        private float[] GetVerticesAsBufferData()
+        public bool DrawElementInfo
         {
-            float[] data = new float[_vertices.Count * 3];
-
-            for (int iVert = 0, iData = 0; iVert < _vertices.Count; iVert++)
-            {
-                data[iData++] = _vertices[iVert].X;
-                data[iData++] = _vertices[iVert].Y;
-                data[iData++] = _zIndex;
-            }
-
-            return data;
+            set => _canvas.DrawElementInfo = value;
+            get => _canvas.DrawElementInfo;
         }
     }
 }

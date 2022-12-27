@@ -8,6 +8,7 @@ namespace Lab1.App.States
 
         public override void Enter()
         {
+            _app.Layers[_app.LayerID].DrawElementInfo = false;
             _app.MakeAllLayersTransperent(1.0f);
         }
 

@@ -158,7 +158,7 @@ namespace Lab1.App
         public void AddHoverPoint()
         {
             Layers[LayerID].DrawLast = false;
-            Layers[LayerID].AddPointSmooth(HoverablePoint());
+            Layers[LayerID].AddPoint(HoverablePoint());
         }
 
         public void UpdateHoverPoint()
@@ -190,7 +190,7 @@ namespace Lab1.App
 
         public void AddPointByMousePosition()
         {
-            Layers[LayerID].AddPointSmooth(HoverablePoint());
+            Layers[LayerID].AddPoint(HoverablePoint());
         }
 
         public Vertex HoverablePoint()

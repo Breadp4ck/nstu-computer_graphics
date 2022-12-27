@@ -104,7 +104,7 @@ namespace Lab1.Core.Shaders
 
                 void main() {
                     float thickness = 0.001;
-                    float interval = 0.1 * scale;
+                    float interval = 0.05 * scale;
 
                     float x = TexCoords.x + offset.x;
                     float y = TexCoords.y + offset.y;
@@ -188,6 +188,117 @@ namespace Lab1.Core.Shaders
             ";
 
             return new Shader(context, vertSource, fragSource, geomSource);
+        }
+
+        public static Shader SelectablePointShader(GL context)
+        {
+            string vertSource = @"#version 330 core
+                layout (location = 0) in vec3 vPos;
+
+                uniform mat4 model;
+                uniform mat4 view;
+                uniform mat4 projection;
+
+                void main() {
+                    gl_Position = projection * view * model * vec4(vPos, 1.0);
+                }
+            ";
+
+            string geomSource = @"#version 330 core
+                layout (points) in;
+                layout (triangle_strip, max_vertices = 4) out;
+
+                out vec2 TexCoords;
+
+                uniform float yx_scale_factor;
+
+                void main() {
+                    float length = 0.020;
+
+                    vec4 p1 = gl_in[0].gl_Position;
+                    vec4 p2 = gl_in[0].gl_Position;
+                    vec4 p3 = gl_in[0].gl_Position;
+                    vec4 p4 = gl_in[0].gl_Position;
+
+                    p1.x -= length * yx_scale_factor; p1.y -= length;
+                    p2.x += length * yx_scale_factor; p2.y -= length;
+                    p3.x -= length * yx_scale_factor; p3.y += length;
+                    p4.x += length * yx_scale_factor; p4.y += length;
+
+                    gl_Position = p1;
+                    TexCoords = vec2(-1.0, -1.0);
+                    EmitVertex();
+                    
+                    gl_Position = p2;
+                    TexCoords = vec2(1.0, -1.0);
+                    EmitVertex();
+
+                    gl_Position = p3;
+                    TexCoords = vec2(-1.0, 1.0);
+                    EmitVertex();
+
+                    gl_Position = p4;
+                    TexCoords = vec2(1.0, 1.0);
+                    EmitVertex();
+
+                    EndPrimitive();
+                } 
+            ";
+
+            string fragSource = @"#version 330 core
+                out vec4 FragColor;
+
+                in vec2 TexCoords;
+
+                uniform vec3 color;
+
+                void main() {
+                    float radius = 0.5;
+                    float thickness = radius / 4.0;
+
+                    float distance = sqrt(dot(TexCoords, TexCoords));
+
+                    if (distance < radius - thickness) {
+                        FragColor = vec4(color, 0.4);
+
+                    } else if (distance < radius) {
+                        FragColor = vec4(vec3(1.0) - color, 0.9);
+
+                    } else {
+                        FragColor = vec4(0.0);
+                    }
+                }
+            ";
+
+            return new Shader(context, vertSource, fragSource, geomSource);
+        }
+
+        public static Shader LineShader(GL context)
+        {
+            string vertSource = @"#version 330 core
+                layout (location = 0) in vec3 vPos;
+                layout (location = 1) in vec2 vTexCoords;
+
+                uniform mat4 model;
+                uniform mat4 view;
+                uniform mat4 projection;
+
+                void main() {
+                    gl_Position = projection * view * model * vec4(vPos, 1.0);
+                }
+            ";
+
+            string fragSource = @"#version 330 core
+                out vec4 FragColor;
+
+                uniform vec3 color;
+
+                void main() {
+                    FragColor = vec4(color, 0.25);
+                }
+            ";
+
+            return new Shader(context, vertSource, fragSource);
         }
     }
 }
