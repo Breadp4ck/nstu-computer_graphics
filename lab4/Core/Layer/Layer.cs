@@ -216,6 +216,7 @@ namespace Lab1.Core
 
             float[] data = new float[0] { };
             _canvas.AttachData(data);
+            _canvas.AttachLinesData(data);
         }
 
         public bool DrawLast

@@ -98,6 +98,9 @@ namespace Lab1.App
                 Layers[layerID].Transperent = 1.0f;
             }
 
+            Layers[LayerID].DrawElementInfo = false;
+            Layers[layerID].DrawElementInfo = true;
+
             _context.Gui!.CurrentLayer = layerID;
 
             var position = Layers[layerID].Transform.Position;

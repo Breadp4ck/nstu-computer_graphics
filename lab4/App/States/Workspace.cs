@@ -22,11 +22,13 @@ namespace Lab1.App.States
                     break;
 
                 case Key.Z:
+                    _app.Layers[_app.LayerID].DrawElementInfo = false;
                     _app.PreviousLayer();
                     _app.UpdateLayerGuiData(_app.LayerID);
                     break;
 
                 case Key.X:
+                    _app.Layers[_app.LayerID].DrawElementInfo = false;
                     _app.NextLayer();
                     _app.UpdateLayerGuiData(_app.LayerID);
                     break;
