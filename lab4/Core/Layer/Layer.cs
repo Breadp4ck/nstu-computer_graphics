@@ -118,26 +118,44 @@ namespace Lab1.Core
 
         private float[] GetCurvePointsBuffer()
         {
-            float[] data = new float[(_curve.Count - 1) * 4 * 3 + 3];
+            float[] data = new float[(_curve.Count - 1) * 4 * 3 + 9];
 
-            for (int iElem = 0, iData = 0; iElem < _curve.Count - 1; iElem++)
+            if (_curve.Count == 1)
             {
-                data[iData++] = _curve[iElem].Center.X;
-                data[iData++] = _curve[iElem].Center.Y;
-                data[iData++] = _zIndex;
+                data = new float[9];
 
-                data[iData++] = _curve[iElem].Right.X;
-                data[iData++] = _curve[iElem].Right.Y;
-                data[iData++] = _zIndex;
+                data[0] = _curve[_curve.Count - 1].Left.X;
+                data[1] = _curve[_curve.Count - 1].Left.Y;
+                data[2] = _zIndex;
 
-                data[iData++] = _curve[iElem + 1].Left.X;
-                data[iData++] = _curve[iElem + 1].Left.Y;
-                data[iData++] = _zIndex;
-
-                data[iData++] = _curve[iElem + 1].Center.X;
-                data[iData++] = _curve[iElem + 1].Center.Y;
-                data[iData++] = _zIndex;
+                data[3] = _curve[_curve.Count - 1].Center.X;
+                data[4] = _curve[_curve.Count - 1].Center.Y;
+                data[5] = _zIndex;
             }
+            else
+            {
+                data = new float[(_curve.Count - 1) * 4 * 3 + 3];
+
+                for (int iElem = 0, iData = 0; iElem < _curve.Count - 1; iElem++)
+                {
+                    data[iData++] = _curve[iElem].Center.X;
+                    data[iData++] = _curve[iElem].Center.Y;
+                    data[iData++] = _zIndex;
+
+                    data[iData++] = _curve[iElem].Right.X;
+                    data[iData++] = _curve[iElem].Right.Y;
+                    data[iData++] = _zIndex;
+
+                    data[iData++] = _curve[iElem + 1].Left.X;
+                    data[iData++] = _curve[iElem + 1].Left.Y;
+                    data[iData++] = _zIndex;
+
+                    data[iData++] = _curve[iElem + 1].Center.X;
+                    data[iData++] = _curve[iElem + 1].Center.Y;
+                    data[iData++] = _zIndex;
+                }
+            }
+
 
             data[data.Length - 3] = _curve[_curve.Count - 1].Right.X;
             data[data.Length - 2] = _curve[_curve.Count - 1].Right.Y;
