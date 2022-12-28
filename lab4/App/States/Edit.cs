@@ -13,6 +13,7 @@ namespace Lab1.App.States
         public override void Enter()
         {
             _app.MakeAllLayersTransperent(0.2f);
+            _app.Layers[_app.LayerID].DrawElementInfo = true;
             _app.Layers[_app.LayerID].Transperent = 1.0f;
 
             _app.Layers[_app.LayerID].ApplyLayerTransform = false;
